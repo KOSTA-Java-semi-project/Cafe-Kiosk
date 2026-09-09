@@ -1,12 +1,12 @@
 package kosta.kiosk.model.dto;
 
 public class Menu {
-	
 	public enum HotIce {
 		HOT, ICE
 	}
 	
 	private int menuId;
+	private int categoryId;
 	private String menuName;
 	private String description;
 	private int price;
@@ -16,9 +16,10 @@ public class Menu {
 		
 	}
 
-	public Menu(int menuId, String menuName, String description, int price, HotIce hotIce) {
+	public Menu(int menuId, int categoryId, String menuName, String description, int price, HotIce hotIce) {
 		super();
 		this.menuId = menuId;
+		this.categoryId = categoryId;
 		this.menuName = menuName;
 		this.description = description;
 		this.price = price;
@@ -31,6 +32,14 @@ public class Menu {
 
 	public void setMenuId(int menuId) {
 		this.menuId = menuId;
+	}
+	
+	public int getCategoryId() {
+		return categoryId;
+	}
+	
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	public String getMenuName() {
@@ -66,10 +75,12 @@ public class Menu {
 	}
 
 	@Override
-	public String toString() {
-		return "메뉴번호 : " + menuId
-				+ ", 메뉴명: " + menuName
-				+ ", 가격: " + price + "원"
-				+ ", 핫/아이스:  " + hotIce;	
+    public String toString() {
+        return "MenuDTO [menuId=" + menuId
+                + ", categoryId=" + categoryId
+                + ", menuName=" + menuName
+                + ", price=" + price
+                + ", hotIce=" + hotIce + "]";	
 	}
 }
+
