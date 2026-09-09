@@ -1,4 +1,4 @@
-package dao;
+package kosta.kiosk.exception;
 
 public class DMLException extends Exception {
 
