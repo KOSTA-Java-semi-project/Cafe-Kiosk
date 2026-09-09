@@ -13,6 +13,7 @@ public interface OrderDAO {
      *
      * @param userId 회원 번호
      * @return 해당 회원의 주문 목록 (없으면 빈 리스트)
+     * "SELECT order_id, user_id, sum, created_at FROM orders WHERE user_id = ? ORDER BY order_id DESC
      */
     List<Order> orderSelectByUser(int userId) throws SQLException;
 
@@ -22,6 +23,7 @@ public interface OrderDAO {
      *
      * @param order 등록할 주문. orderDetailList 에 주문상세가 채워져 있어야 한다.
      * @return 생성된 order_id
+     * SELECT order_id, user_id, sum, created_at FROM orders WHERE order_id = ?
      */
     int insertOrder(Order order) throws SQLException;
 
@@ -30,6 +32,7 @@ public interface OrderDAO {
      *
      * @param orderId 주문 번호
      * @return 주문 1건, 없으면 null
+     * "INSERT INTO orders (user_id, sum) VALUES (?, ?)";
      */
     Order selectOrderByOrderId(int orderId) throws SQLException;
 
@@ -38,6 +41,7 @@ public interface OrderDAO {
      *
      * @param orderId 주문 번호
      * @return 주문상세 목록 (없으면 빈 리스트)
+     * "SELECT detail_id, order_id, menu_id, amount, size, shot, ice, syrup FROM order_detail WHERE order_id = ?";
      */
     List<OrderDetail> selectOrderDetails(int orderId) throws SQLException;
 }
