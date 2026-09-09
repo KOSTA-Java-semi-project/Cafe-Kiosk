@@ -23,7 +23,7 @@ public interface OrderDAO {
      * @param order 등록할 주문. orderDetailList 에 주문상세가 채워져 있어야 한다.
      * @return 생성된 order_id
      */
-    int orderInsert(Order order) throws SQLException;
+    int insertOrder(Order order) throws SQLException;
 
     /**
      * 주문번호로 주문 1건 조회. 반환되는 Order 의 orderDetailList 까지 채워진다.
@@ -31,7 +31,7 @@ public interface OrderDAO {
      * @param orderId 주문 번호
      * @return 주문 1건, 없으면 null
      */
-    Order orderSelectByNo(int orderId) throws SQLException;
+    Order selectOrderByOrderId(int orderId) throws SQLException;
 
     /**
      * 주문번호에 속한 주문상세 목록만 조회한다. (orderSelectByNo 내부에서 재사용)
