@@ -1,4 +1,4 @@
-package dto;
+package kosta.kiosk.model.dto;
 
 import java.time.LocalDateTime;
 
