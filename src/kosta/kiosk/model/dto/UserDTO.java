@@ -1,4 +1,4 @@
-package dto;
+package kosta.kiosk.model.dto;
 
 public class UserDTO {
     private int userId;

@@ -1,6 +1,6 @@
-package dao;
+package kosta.kiosk.model.dao;
 
-import dto.CouponDTO;
+import kosta.kiosk.model.dto.CouponDTO;
 import kosta.kiosk.exception.DMLException;
 
 import java.util.List;
