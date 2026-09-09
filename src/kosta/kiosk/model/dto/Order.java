@@ -11,6 +11,17 @@ public class Order {
     private List<OrderDetail> orderDetailList; // 주문상세 목록 (조회 시 채워짐)
     private LocalDateTime createdAt;
 
+    public Order() {
+    }
+
+    /** 등록용: orderId, createdAt은 DB가 생성하므로 제외 */
+    public Order(Integer userId, int sum, List<OrderDetail> orderDetailList) {
+        this.userId = userId;
+        this.sum = sum;
+        this.orderDetailList = orderDetailList;
+    }
+
+    /** 조회용: DB에서 읽은 전체 필드 */
     public Order(int orderId, Integer userId, int sum, List<OrderDetail> orderDetailList, LocalDateTime createdAt) {
         this.orderId = orderId;
         this.userId = userId;
