@@ -15,7 +15,7 @@ public interface OrderDAO {
      * @return 해당 회원의 주문 목록 (없으면 빈 리스트)
      * "SELECT order_id, user_id, sum, created_at FROM orders WHERE user_id = ? ORDER BY order_id DESC
      */
-    List<Order> orderSelectByUser(int userId) throws SQLException;
+    List<Order> selectOrderByUserId(int userId) throws SQLException;
 
     /**
      * 주문(order) 1건과 그에 속한 주문상세(order_detail) 목록을
