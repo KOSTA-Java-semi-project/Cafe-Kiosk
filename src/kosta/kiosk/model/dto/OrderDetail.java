@@ -2,14 +2,6 @@ package kosta.kiosk.model.dto;
 
 public class OrderDetail {
 
-    public enum Size {
-        SMALL, MEDIUM, LARGE
-    }
-
-    public enum IceLevel {
-        FEW, LOT, DEFAULT
-    }
-
     private int detailId;
     private int orderId;
     private int menuId;
@@ -19,7 +11,21 @@ public class OrderDetail {
     private IceLevel ice;
     private int syrup;
 
+    public OrderDetail() {
+    }
 
+    /** 등록용: detailId는 DB가 생성하므로 제외 */
+    public OrderDetail(int orderId, int menuId, int amount, Size size, int shot, IceLevel ice, int syrup) {
+        this.orderId = orderId;
+        this.menuId = menuId;
+        this.amount = amount;
+        this.size = size;
+        this.shot = shot;
+        this.ice = ice;
+        this.syrup = syrup;
+    }
+
+    /** 조회용: DB에서 읽은 전체 필드 */
     public OrderDetail(int detailId, int orderId, int menuId, int amount, Size size, int shot, IceLevel ice, int syrup) {
         this.detailId = detailId;
         this.orderId = orderId;
