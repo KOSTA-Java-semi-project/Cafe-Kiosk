@@ -14,7 +14,7 @@ public interface MenuDAO {
     int menuAdd(Menu menu) throws SQLException;
 
     // 메뉴번호로 메뉴 삭제
-    int menuDelete(int menuId) throws SQLException;
+    void menuDelete(int menuId) throws SQLException;
 
     // 메뉴번호로 메뉴 정보 수정
     int menuCorrection(Menu menu) throws SQLException;
