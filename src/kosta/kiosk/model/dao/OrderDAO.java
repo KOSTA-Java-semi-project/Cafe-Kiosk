@@ -45,5 +45,7 @@ public interface OrderDAO {
      */
     List<OrderDetail> selectOrderDetails(int orderId) throws SQLException;
 
+    int insertOrderDetails(OrderDetail orderDetail)throws SQLException;
+
 
 }
