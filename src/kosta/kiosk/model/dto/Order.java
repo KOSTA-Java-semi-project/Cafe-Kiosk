@@ -21,6 +21,13 @@ public class Order {
         this.orderDetailList = orderDetailList;
     }
 
+    public Order(int orderId, Integer userId, int sum, LocalDateTime createdAt) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.sum = sum;
+        this.createdAt = createdAt;
+    }
+
     /** 조회용: DB에서 읽은 전체 필드 */
     public Order(int orderId, Integer userId, int sum, List<OrderDetail> orderDetailList, LocalDateTime createdAt) {
         this.orderId = orderId;
