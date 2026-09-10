@@ -8,14 +8,14 @@ import kosta.kiosk.model.dto.Menu;
 public interface MenuDAO {
 
     // 메뉴 전체 조회
-    List<Menu> menuSelectAll() throws SQLException;
+    List<Menu> selectAllMenu() throws SQLException;
 
     // 메뉴 추가
-    int menuAdd(Menu menu) throws SQLException;
+    int insertMenu(Menu menu) throws SQLException;
 
     // 메뉴번호로 메뉴 삭제
-    void menuDelete(int menuId) throws SQLException;
+    void deleteMenuById(int menuId) throws SQLException;
 
     // 메뉴번호로 메뉴 정보 수정
-    int menuCorrection(Menu menu) throws SQLException;
+    int updateMenuById(Menu menu) throws SQLException;
 }
