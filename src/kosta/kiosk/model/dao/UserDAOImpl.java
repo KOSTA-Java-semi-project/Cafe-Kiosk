@@ -56,13 +56,12 @@ public class UserDAOImpl implements UserDAO {
             pstmt.setString(1, userDTO.getName());
             pstmt.setString(2, userDTO.getPhone());
 
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    result = rs.getInt(1);
-                }
+            pstmt.executeUpdate();
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                result = rs.getInt(1);
             }
+
         } finally {
             DbManager.close(con, pstmt, rs);
         }

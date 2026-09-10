@@ -59,13 +59,13 @@ public class CouponDAOImpl implements CouponDAO {
             pstmt.setInt(1, couponDTO.getUserId());
             pstmt.setInt(2, couponDTO.getPrice());
 
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    result = rs.getInt(1);
-                }
+            pstmt.executeUpdate();
+
+            rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                result = rs.getInt(1);
             }
+
         } finally {
             DbManager.close(con, pstmt, rs);
         }
