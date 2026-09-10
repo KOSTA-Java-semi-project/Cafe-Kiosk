@@ -1,10 +1,10 @@
 package kosta.kiosk.model.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import kosta.kiosk.model.dto.Menu;
+import kosta.kiosk.model.dto.Menu.HotIce;
+import kosta.kiosk.util.DbManager;
+
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
