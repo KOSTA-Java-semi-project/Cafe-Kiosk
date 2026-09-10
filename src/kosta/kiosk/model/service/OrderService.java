@@ -28,18 +28,15 @@ public class OrderService {
     }
 
     private int calculateSum(List<OrderDetail> orderDetailList) throws SQLException {
-        Map<Integer, Menu> menuMap = new HashMap<>();
+        Map<Integer, Integer> priceMap = new HashMap<>();
         for (Menu menu : menuDAO.menuSelectAll()) {
-            menuMap.put(menu.getMenuId(), menu);
+            priceMap.put(menu.getMenuId(), menu.getPrice());
         }
 
         int sum = 0;
         for (OrderDetail detail : orderDetailList) {
-            Menu menu = menuMap.get(detail.getMenuId());
-            if (menu == null) {
-                throw new SQLException("존재하지 않는 메뉴입니다: menuId=" + detail.getMenuId());
-            }
-            sum += menu.getPrice() * detail.getAmount();
+            int price = priceMap.get(detail.getMenuId());
+            sum += price * detail.getAmount();
         }
         return sum;
     }
