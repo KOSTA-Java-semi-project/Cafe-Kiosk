@@ -13,6 +13,13 @@ public class UserDTO {
         this.stamp = stamp;
     }
 
+    // 오버로딩
+    // 회원가입 전용 생성자: DB 저장 전이라 userId가 아직 없으므로 제외. 스탬프도 기본값이 0이므로 제외.
+    public UserDTO(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
+    }
+
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
 
