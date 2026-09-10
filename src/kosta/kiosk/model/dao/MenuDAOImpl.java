@@ -1,17 +1,13 @@
 package kosta.kiosk.model.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import kosta.kiosk.model.dto.Menu;
+import kosta.kiosk.model.dto.Menu.HotIce;
+import kosta.kiosk.util.DbManager;
+
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import kosta.kiosk.model.dto.Menu;
-import kosta.kiosk.model.dto.Menu.HotIce;
-import kosta.kiosk.util.DBManager;
 
 public class MenuDAOImpl implements MenuDAO {
 
@@ -27,7 +23,7 @@ public class MenuDAOImpl implements MenuDAO {
                 + "FROM menu ORDER BY menu_id";
 
         try (
-            Connection con = DBManager.getConnection();
+                Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()
         ) {
@@ -73,7 +69,7 @@ public class MenuDAOImpl implements MenuDAO {
         }
 
         try (
-            Connection con = DBManager.getConnection();
+            Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
             ps.setInt(1, menu.getCategoryId());
@@ -101,7 +97,7 @@ public class MenuDAOImpl implements MenuDAO {
         String sql = "DELETE FROM menu WHERE menu_id = ?";
 
         try (
-            Connection con = DBManager.getConnection();
+            Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
             ps.setInt(1, menuId);
@@ -127,7 +123,7 @@ public class MenuDAOImpl implements MenuDAO {
                 + "WHERE menu_id = ?";
 
         try (
-            Connection con = DBManager.getConnection();
+            Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
             ps.setInt(1, menu.getCategoryId());
