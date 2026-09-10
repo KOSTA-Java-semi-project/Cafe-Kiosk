@@ -4,11 +4,14 @@ import kosta.kiosk.model.dto.Menu;
 import kosta.kiosk.model.dto.Menu.HotIce;
 import kosta.kiosk.util.DbManager;
 
-import java.sql.*;
-import java.time.LocalDateTime;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class MenuDAOImpl implements MenuDAO {
 
@@ -38,8 +41,15 @@ public class MenuDAOImpl implements MenuDAO {
                 menu.setMenuName(rs.getString("menu_name"));
                 menu.setDescription(rs.getString("description"));
                 menu.setPrice(rs.getInt("price"));
-                menu.setHotIce(HotIce.valueOf(rs.getString("hot_ice")));
 
+                // hot_ice가 NULL일 경우를 대비
+                String hotIce = rs.getString("hot_ice");
+
+                if (hotIce != null) {
+                    menu.setHotIce(HotIce.valueOf(hotIce));
+                }
+
+                // DB의 created_at 값을 LocalDateTime으로 변환
                 Timestamp createdAt = rs.getTimestamp("created_at");
 
                 if (createdAt != null) {
@@ -55,21 +65,17 @@ public class MenuDAOImpl implements MenuDAO {
         return menuList;
     }
 
+
     // 메뉴 추가
+    // menu_id는 AUTO_INCREMENT
+    // created_at은 DB DEFAULT 값 사용
     @Override
     public int insertMenu(Menu menu) throws SQLException {
 
         String sql =
                 "INSERT INTO menu "
-                + "(category_id, menu_name, description, price, "
-                + "hot_ice, created_at, soldout) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        LocalDateTime createdAt = menu.getCreatedAt();
-
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
+                + "(category_id, menu_name, description, price, hot_ice, soldout) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (
             Connection con = DbManager.getConnection();
@@ -80,25 +86,26 @@ public class MenuDAOImpl implements MenuDAO {
             ps.setString(2, menu.getMenuName());
             ps.setString(3, menu.getDescription());
             ps.setInt(4, menu.getPrice());
-            ps.setString(5, menu.getHotIce().name());
-            ps.setTimestamp(6, Timestamp.valueOf(createdAt));
-            ps.setBoolean(7, menu.isSoldout());
 
-            int result = ps.executeUpdate();
-
-            if (result > 0) {
-                menu.setCreatedAt(createdAt);
+            if (menu.getHotIce() != null) {
+                ps.setString(5, menu.getHotIce().name());
+            } else {
+                ps.setNull(5, Types.VARCHAR);
             }
 
-            return result;
+            ps.setBoolean(6, menu.isSoldout());
+
+            return ps.executeUpdate();
         }
     }
+
 
     // 메뉴번호로 메뉴 삭제
     @Override
     public void deleteMenuById(int menuId) throws SQLException {
 
-        String sql = "DELETE FROM menu WHERE menu_id = ?";
+        String sql =
+                "DELETE FROM menu WHERE menu_id = ?";
 
         try (
             Connection con = DbManager.getConnection();
@@ -107,11 +114,19 @@ public class MenuDAOImpl implements MenuDAO {
 
             ps.setInt(1, menuId);
 
-            ps.executeUpdate();
+            int result = ps.executeUpdate();
+
+            if (result == 0) {
+                throw new SQLException(
+                        "삭제할 메뉴가 없습니다. 메뉴번호: " + menuId
+                );
+            }
         }
     }
 
-    // 메뉴번호로 메뉴 수정
+
+    // 메뉴번호로 메뉴 정보 수정
+    // created_at은 수정하지 않음
     @Override
     public int updateMenuById(Menu menu) throws SQLException {
 
@@ -134,7 +149,13 @@ public class MenuDAOImpl implements MenuDAO {
             ps.setString(2, menu.getMenuName());
             ps.setString(3, menu.getDescription());
             ps.setInt(4, menu.getPrice());
-            ps.setString(5, menu.getHotIce().name());
+
+            if (menu.getHotIce() != null) {
+                ps.setString(5, menu.getHotIce().name());
+            } else {
+                ps.setNull(5, Types.VARCHAR);
+            }
+
             ps.setBoolean(6, menu.isSoldout());
             ps.setInt(7, menu.getMenuId());
 
