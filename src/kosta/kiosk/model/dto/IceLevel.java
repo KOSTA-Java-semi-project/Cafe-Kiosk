@@ -13,7 +13,7 @@ public enum IceLevel {
 		return code;
 	}
 
-	public IceLevel fromCode(String code) {
+	public static IceLevel fromCode(String code) {
 		for (IceLevel i : values()) {
 			if (i.code.equals(code))
 				return i;
