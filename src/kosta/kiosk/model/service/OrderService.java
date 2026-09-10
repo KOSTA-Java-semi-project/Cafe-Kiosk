@@ -29,7 +29,7 @@ public class OrderService {
 
     private int calculateSum(List<OrderDetail> orderDetailList) throws SQLException {
         Map<Integer, Integer> priceMap = new HashMap<>();
-        for (Menu menu : menuDAO.menuSelectAll()) {
+        for (Menu menu : menuDAO.selectAllMenu()) {
             priceMap.put(menu.getMenuId(), menu.getPrice());
         }
 
