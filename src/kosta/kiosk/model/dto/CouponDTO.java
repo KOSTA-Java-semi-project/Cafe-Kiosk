@@ -14,6 +14,10 @@ public class CouponDTO {private int couponId;
         this.createdAt = createdAt;
     }
 
+    public CouponDTO(int userId) {
+        this.userId = userId;
+    }
+
     public int getCouponId() {
         return couponId;
     }
