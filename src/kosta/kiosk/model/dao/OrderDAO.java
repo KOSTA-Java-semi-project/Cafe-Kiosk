@@ -25,7 +25,7 @@ public interface OrderDAO {
      * @return 생성된 order_id
      *
      */
-    int insertOrder(Connection conn, Order order) throws SQLException;
+    int insertOrder(Order order) throws SQLException;
 
     /**
      * 주문번호로 주문 1건 조회. 반환되는 Order 의 orderDetailList 까지 채워진다.
