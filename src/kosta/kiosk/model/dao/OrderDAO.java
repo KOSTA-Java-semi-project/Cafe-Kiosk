@@ -1,8 +1,6 @@
 package kosta.kiosk.model.dao;
-import java.sql.Connection;
 import kosta.kiosk.model.dto.Order;
 import kosta.kiosk.model.dto.OrderDetail;
-
 import java.sql.SQLException;
 import java.util.List;
 

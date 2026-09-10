@@ -63,19 +63,12 @@ public class OrderDAOImpl implements OrderDAO {
             int[] detailResults = insertOrderDetails(con, order, order.getOrderId());
             for (int r : detailResults) {
                 if (r != 1) {
+                    con.rollback();
                     throw new SQLException("주문 상세 등록 실패");
                 }
             }
             con.commit();
-        } catch (SQLException e) {
-            if (con != null) {
-                con.rollback();
-            }
-            throw e;
         } finally {
-            if (con != null) {
-                con.setAutoCommit(true);
-            }
             DbManager.close(con, stmt, rs);
         }
         return result;
@@ -100,8 +93,8 @@ public class OrderDAOImpl implements OrderDAO {
                 order = new Order(rs.getInt("order_id"),
                         rs.getInt("user_id"), rs.getInt("sum"),
                         rs.getTimestamp("created_at").toLocalDateTime());
-                List<OrderDetail> orderLineList = this.selectOrderDetailsByOrderId(order.getOrderId());
-                order.setOrderDetailList(orderLineList);
+                List<OrderDetail> orderDetailList = this.selectOrderDetailsByOrderId(order.getOrderId());
+                order.setOrderDetailList(orderDetailList);
             }
 
         } finally {
