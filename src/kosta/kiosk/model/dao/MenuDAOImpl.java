@@ -17,7 +17,7 @@ public class MenuDAOImpl implements MenuDAO {
 
     // 메뉴 전체 조회
     @Override
-    public List<Menu> menuSelectAll() throws SQLException {
+    public List<Menu> selectAllMenu() throws SQLException {
 
         List<Menu> menuList = new ArrayList<>();
 
@@ -31,7 +31,9 @@ public class MenuDAOImpl implements MenuDAO {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()
         ) {
+
             while (rs.next()) {
+
                 Menu menu = new Menu();
 
                 menu.setMenuId(rs.getInt("menu_id"));
@@ -41,8 +43,8 @@ public class MenuDAOImpl implements MenuDAO {
                 menu.setPrice(rs.getInt("price"));
                 menu.setHotIce(HotIce.valueOf(rs.getString("hot_ice")));
 
-                // DB의 DATETIME을 Java의 LocalDateTime으로 변환
                 Timestamp createdAt = rs.getTimestamp("created_at");
+
                 if (createdAt != null) {
                     menu.setCreatedAt(createdAt.toLocalDateTime());
                 }
@@ -56,9 +58,9 @@ public class MenuDAOImpl implements MenuDAO {
         return menuList;
     }
 
-    // 메뉴 추가: menu_id는 AUTO_INCREMENT라고 가정
+    // 메뉴 추가
     @Override
-    public int menuAdd(Menu menu) throws SQLException {
+    public int insertMenu(Menu menu) throws SQLException {
 
         String sql =
                 "INSERT INTO menu "
@@ -66,8 +68,8 @@ public class MenuDAOImpl implements MenuDAO {
                 + "hot_ice, created_at, soldout) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        // 등록일자가 없으면 현재 시간 사용
         LocalDateTime createdAt = menu.getCreatedAt();
+
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
@@ -76,6 +78,7 @@ public class MenuDAOImpl implements MenuDAO {
             Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
+
             ps.setInt(1, menu.getCategoryId());
             ps.setString(2, menu.getMenuName());
             ps.setString(3, menu.getDescription());
@@ -96,7 +99,7 @@ public class MenuDAOImpl implements MenuDAO {
 
     // 메뉴번호로 메뉴 삭제
     @Override
-    public void menuDelete(int menuId) throws SQLException {
+    public void deleteMenuById(int menuId) throws SQLException {
 
         String sql = "DELETE FROM menu WHERE menu_id = ?";
 
@@ -104,32 +107,32 @@ public class MenuDAOImpl implements MenuDAO {
             Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
+
             ps.setInt(1, menuId);
 
-            int result = ps.executeUpdate();
-
-            if (result == 0) {
-                throw new SQLException(
-                        "삭제할 메뉴가 없습니다. 메뉴번호: " + menuId
-                );
-            }
+            ps.executeUpdate();
         }
     }
 
-    // 메뉴번호로 메뉴 정보 수정
+    // 메뉴번호로 메뉴 수정
     @Override
-    public int menuCorrection(Menu menu) throws SQLException {
+    public int updateMenuById(Menu menu) throws SQLException {
 
         String sql =
                 "UPDATE menu "
-                + "SET category_id = ?, menu_name = ?, description = ?, "
-                + "price = ?, hot_ice = ?, soldout = ? "
+                + "SET category_id = ?, "
+                + "menu_name = ?, "
+                + "description = ?, "
+                + "price = ?, "
+                + "hot_ice = ?, "
+                + "soldout = ? "
                 + "WHERE menu_id = ?";
 
         try (
             Connection con = DbManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)
         ) {
+
             ps.setInt(1, menu.getCategoryId());
             ps.setString(2, menu.getMenuName());
             ps.setString(3, menu.getDescription());
