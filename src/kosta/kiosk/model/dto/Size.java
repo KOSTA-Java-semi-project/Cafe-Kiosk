@@ -14,7 +14,7 @@ public enum Size {
 		return code;
 	}
 
-	public Size fromValue(String code) {
+	public static Size fromValue(String code) {
 		for (Size s : values()) {
 			if (s.code.equals(code))
 				return s;
