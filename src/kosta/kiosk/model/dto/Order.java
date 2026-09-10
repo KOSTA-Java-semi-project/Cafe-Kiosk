@@ -21,7 +21,7 @@ public class Order {
         this.orderDetailList = orderDetailList;
     }
 
-    public Order(int orderId, Integer userId, int sum, LocalDateTime createdAt) {
+    public Order(int orderId, int userId, int sum, LocalDateTime createdAt) {
         this.orderId = orderId;
         this.userId = userId;
         this.sum = sum;
