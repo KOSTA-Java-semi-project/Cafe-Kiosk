@@ -1,4 +1,4 @@
-package kosta.kiosk.model.service;
+package kosta.kiosk.view;
 import kosta.kiosk.model.dto.Category;
 import kosta.kiosk.model.dto.IceLevel;
 import kosta.kiosk.model.dto.Menu;
