@@ -1,6 +1,6 @@
 package kosta.kiosk.model.dao;
 
-import kosta.kiosk.model.dto.UserDTO;
+import kosta.kiosk.model.dto.CouponDTO;
 import kosta.kiosk.exception.DMLException;
 import kosta.kiosk.util.DbManager;
 
@@ -9,42 +9,46 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UserDAOImpl implements UserDAO {
+public class CouponDAOImpl implements CouponDAO {
 
     @Override
-    public UserDTO selectUserByPhone(String phone) throws DMLException {
-        String sql = "SELECT user_id, name, phone, stamp FROM `user` WHERE phone = ?";
+    public List<CouponDTO> selectCouponByUser(int userId) throws DMLException {
+        String sql = "SELECT coupon_id, user_id, price, created_at "
+                + "FROM coupon WHERE user_id = ? ORDER BY created_at DESC";
 
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        List<CouponDTO> result = new ArrayList<>();
 
         try {
             con = DbManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, phone);
+            pstmt.setInt(1, userId);
 
             rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return new UserDTO(
+            while (rs.next()) {
+                result.add(new CouponDTO(
+                        rs.getInt("coupon_id"),
                         rs.getInt("user_id"),
-                        rs.getString("name"),
-                        rs.getString("phone"),
-                        rs.getInt("stamp")
-                );
+                        rs.getInt("price"),
+                        rs.getTimestamp("created_at").toLocalDateTime()
+                ));
             }
-            return null; // 없는 회원이면 null
+            return result;
         } catch (SQLException e) {
-            throw new DMLException("회원 조회 실패", e);
+            throw new DMLException("쿠폰 조회 실패", e);
         } finally {
             DbManager.close(con, pstmt, rs);
         }
     }
 
     @Override
-    public int insertUser(UserDTO userDTO) throws DMLException {
-        String sql = "INSERT INTO `user` (name, phone) VALUES (?, ?)";
+    public int insertCoupon(CouponDTO couponDTO) throws DMLException {
+        String sql = "INSERT INTO coupon (user_id, price) VALUES (?, ?)";
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -53,8 +57,8 @@ public class UserDAOImpl implements UserDAO {
         try {
             con = DbManager.getConnection();
             pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, userDTO.getName());
-            pstmt.setString(2, userDTO.getPhone());
+            pstmt.setInt(1, couponDTO.getUserId());
+            pstmt.setInt(2, couponDTO.getPrice());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
@@ -63,19 +67,19 @@ public class UserDAOImpl implements UserDAO {
 
             rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
-                return rs.getInt(1); // DB가 자동 생성한 user_id 반환
+                return rs.getInt(1);
             }
             return 0;
         } catch (SQLException e) {
-            throw new DMLException("회원가입 실패", e);
+            throw new DMLException("쿠폰 발급 실패", e);
         } finally {
             DbManager.close(con, pstmt, rs);
         }
     }
 
     @Override
-    public boolean updateUserStamp(int userId, int stamp) throws DMLException {
-        String sql = "UPDATE `user` SET stamp = ? WHERE user_id = ?";
+    public boolean deleteCoupon(int couponId) throws DMLException {
+        String sql = "DELETE FROM coupon WHERE coupon_id = ?";
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -83,13 +87,12 @@ public class UserDAOImpl implements UserDAO {
         try {
             con = DbManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setInt(1, stamp);
-            pstmt.setInt(2, userId);
+            pstmt.setInt(1, couponId);
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            throw new DMLException("스탬프 갱신 실패", e);
+            throw new DMLException("쿠폰 사용 실패", e);
         } finally {
             DbManager.close(con, pstmt, null);
         }
