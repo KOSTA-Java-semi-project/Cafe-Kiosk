@@ -1,12 +1,11 @@
 package kosta.kiosk.model.dao;
 
 import kosta.kiosk.model.dto.CouponDTO;
-import kosta.kiosk.exception.DMLException;
-
+import java.sql.SQLException;
 import java.util.List;
 
 public interface CouponDAO {
-    List<CouponDTO> selectCouponByUser(int userId) throws DMLException; //쿠폰조회
-    int insertCoupon(CouponDTO couponDTO) throws DMLException; //쿠폰발급
-    boolean deleteCoupon(int couponId) throws DMLException; //쿠폰삭제
+    List<CouponDTO> selectCouponByUserId(int userId) throws SQLException;
+    int insertCoupon(CouponDTO couponDTO) throws SQLException;
+    boolean deleteCouponByCouponId(int couponId) throws SQLException;
 }

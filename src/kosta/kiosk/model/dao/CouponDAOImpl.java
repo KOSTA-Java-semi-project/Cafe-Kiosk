@@ -1,7 +1,6 @@
 package kosta.kiosk.model.dao;
 
 import kosta.kiosk.model.dto.CouponDTO;
-import kosta.kiosk.exception.DMLException;
 import kosta.kiosk.util.DbManager;
 
 import java.sql.Connection;
@@ -15,7 +14,7 @@ import java.util.List;
 public class CouponDAOImpl implements CouponDAO {
 
     @Override
-    public List<CouponDTO> selectCouponByUser(int userId) throws DMLException {
+    public List<CouponDTO> selectCouponByUserId(int userId) throws SQLException {
         String sql = "SELECT coupon_id, user_id, price, created_at "
                 + "FROM coupon WHERE user_id = ? ORDER BY created_at DESC";
 
@@ -38,21 +37,21 @@ public class CouponDAOImpl implements CouponDAO {
                         rs.getTimestamp("created_at").toLocalDateTime()
                 ));
             }
-            return result;
-        } catch (SQLException e) {
-            throw new DMLException("쿠폰 조회 실패", e);
         } finally {
             DbManager.close(con, pstmt, rs);
         }
+
+        return result;
     }
 
     @Override
-    public int insertCoupon(CouponDTO couponDTO) throws DMLException {
+    public int insertCoupon(CouponDTO couponDTO) throws SQLException {
         String sql = "INSERT INTO coupon (user_id, price) VALUES (?, ?)";
 
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        int result = 0;
 
         try {
             con = DbManager.getConnection();
@@ -61,40 +60,37 @@ public class CouponDAOImpl implements CouponDAO {
             pstmt.setInt(2, couponDTO.getPrice());
 
             int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                return 0;
+            if (affectedRows > 0) {
+                rs = pstmt.getGeneratedKeys();
+                if (rs.next()) {
+                    result = rs.getInt(1);
+                }
             }
-
-            rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-            return 0;
-        } catch (SQLException e) {
-            throw new DMLException("쿠폰 발급 실패", e);
         } finally {
             DbManager.close(con, pstmt, rs);
         }
+
+        return result;
     }
 
     @Override
-    public boolean deleteCoupon(int couponId) throws DMLException {
+    public boolean deleteCouponByCouponId(int couponId) throws SQLException {
         String sql = "DELETE FROM coupon WHERE coupon_id = ?";
 
         Connection con = null;
         PreparedStatement pstmt = null;
+        boolean result = false;
 
         try {
             con = DbManager.getConnection();
             pstmt = con.prepareStatement(sql);
             pstmt.setInt(1, couponId);
 
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException e) {
-            throw new DMLException("쿠폰 사용 실패", e);
+            result = pstmt.executeUpdate() > 0;
         } finally {
             DbManager.close(con, pstmt, null);
         }
+
+        return result;
     }
 }

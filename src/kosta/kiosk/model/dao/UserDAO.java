@@ -1,12 +1,10 @@
 package kosta.kiosk.model.dao;
 
 import kosta.kiosk.model.dto.UserDTO;
-import kosta.kiosk.exception.DMLException;
+import java.sql.SQLException;
 
 public interface UserDAO {
-    UserDTO selectUserByPhone(String phone) throws DMLException; //회원조회
-    int insertUser(UserDTO userDTO) throws DMLException; //회원추가
-    boolean updateUserStamp(int userId, int stamp) throws DMLException; //스탬프갱신
-
-
+    UserDTO selectUserByPhone(String phone) throws SQLException;
+    int insertUser(UserDTO userDTO) throws SQLException;
+    boolean updateUserStampByUserId(int userId, int stamp) throws SQLException;
 }
