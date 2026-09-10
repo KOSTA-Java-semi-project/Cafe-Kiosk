@@ -11,7 +11,6 @@ import java.sql.SQLException;
 
 public class UserServiceImpl implements UserService {
     private static final int STAMP_GOAL = 10;
-    private static final int COUPON_DISCOUNT = 2000;
     private final UserDAO userDAO = new UserDAOImpl();
     private final CouponDAO couponDAO = new CouponDAOImpl();
 
@@ -22,7 +21,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO signUp(String name, String phone) throws SQLException {
-        UserDTO newUser = new UserDTO(0,name,phone,0);
+        UserDTO newUser = new UserDTO(name,phone); //UserId는 오버로딩, 스탬프는 기본값이 0이니까 제외.
         int generatedId = userDAO.insertUser(newUser);
 
         newUser.setUserId(generatedId);
@@ -40,7 +39,7 @@ public class UserServiceImpl implements UserService {
         user.setStamp(remainStamp);
 
         for (int i = 0; i <couponsEarned; i++) {
-            CouponDTO newCoupon = new CouponDTO(0, user.getUserId(), COUPON_DISCOUNT, null);
+            CouponDTO newCoupon = new CouponDTO(user.getUserId());
             couponDAO.insertCoupon(newCoupon);
         }
         }
