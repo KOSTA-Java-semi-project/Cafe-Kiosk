@@ -6,10 +6,7 @@ import kosta.kiosk.model.dto.OrderDetail;
 import kosta.kiosk.model.dto.Size;
 import kosta.kiosk.util.DbManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,25 +39,27 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public int insertOrder(Order order) throws SQLException {
-        Connection conn = null;
+    public int insertOrder(Connection conn, Order order) throws SQLException {
         PreparedStatement stmt = null;
-
-        String sql = "insert into `order` (order_id, user_id, sum, created_at) values (?, ?, ?, now())";
+        String sql = "insert into `order` (user_id, sum, created_at) values (?, ?, now())";
         int result;
         try {
-            conn = DbManager.getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, order.getOrderId());
-            stmt.setInt(2, order.getUserId());
-            stmt.setInt(3, order.getSum());
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, order.getUserId());
+            stmt.setInt(2, order.getSum());
             result = stmt.executeUpdate();
 
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    order.setOrderId(rs.getInt(1));
+                }
+            }
         } finally {
-            DbManager.close(conn, stmt, null);
+            DbManager.close(null, stmt, null);
         }
         return result;
     }
+
 
     @Override
     public Order selectOrderByOrderId(int orderId) throws SQLException {
@@ -77,7 +76,7 @@ public class OrderDAOImpl implements OrderDAO {
             rs = stmt.executeQuery();
             while (rs.next()) {
                 order = new Order(rs.getInt("order_id"), rs.getInt("user_id"), rs.getInt("sum"), rs.getTimestamp("created_at").toLocalDateTime());
-                List<OrderDetail> orderLineList = this.selectOrderDetails(order.getOrderId());//메소드 호출
+                List<OrderDetail> orderLineList = this.selectOrderDetailsByOrderId(order.getOrderId());//메소드 호출
                 order.setOrderDetailList(orderLineList);
 
             }
@@ -89,7 +88,7 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public List<OrderDetail> selectOrderDetails(int orderId) throws SQLException {
+    public List<OrderDetail> selectOrderDetailsByOrderId(int orderId) throws SQLException {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -101,12 +100,15 @@ public class OrderDAOImpl implements OrderDAO {
             rs = ps.executeQuery();
 
             while (rs.next()) {
+                String iceCode = rs.getString("ice");
+                IceLevel ice = (iceCode == null) ? null : IceLevel.fromCode(iceCode);
+
                 OrderDetail orderDetail = new OrderDetail(rs.getInt("detail_id"),
                         rs.getInt("order_id"), rs.getInt("menu_id"),
                         rs.getInt("amount"),
                         Size.fromValue(rs.getString("size")),
                         rs.getInt("shot"),
-                        IceLevel.fromCode(rs.getString("ice")),
+                        ice,
                         rs.getInt("syrup"));
                 list.add(orderDetail);
             }
@@ -117,26 +119,37 @@ public class OrderDAOImpl implements OrderDAO {
 
     }
 
-    @Override
-    public int insertOrderDetails(OrderDetail orderDetail) throws SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
 
+    public int[] insertOrderDetails(Connection con, Order order, int orderId) throws SQLException {
+        PreparedStatement stmt = null;
         String sql = "insert into order_detail (order_id, menu_id, amount, size, shot, ice, syrup) values (?, ?, ?, ?, ?, ?, ?)";
-        int result;
+        int[] result;
+
         try {
-            conn = DbManager.getConnection();
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, orderDetail.getOrderId());
-            stmt.setInt(2, orderDetail.getMenuId());
-            stmt.setInt(3, orderDetail.getAmount());
-            stmt.setString(4, orderDetail.getSize().getCode());
-            stmt.setInt(5, orderDetail.getShot());
-            stmt.setString(6, orderDetail.getIce().getCode());
-            stmt.setInt(7, orderDetail.getSyrup());
-            result = stmt.executeUpdate();
+            stmt = con.prepareStatement(sql);
+
+            for (OrderDetail orderDetail : order.getOrderDetailList()) {
+                stmt.setInt(1, orderId);
+                stmt.setInt(2, orderDetail.getMenuId());
+                stmt.setInt(3, orderDetail.getAmount());
+                stmt.setString(4, orderDetail.getSize().getCode());
+                stmt.setInt(5, orderDetail.getShot());
+
+                if (orderDetail.getIce() != null) {
+                    stmt.setString(6, orderDetail.getIce().getCode());
+                } else {
+                    stmt.setNull(6, Types.VARCHAR);
+                }
+
+                stmt.setInt(7, orderDetail.getSyrup());
+
+                stmt.addBatch();
+                stmt.clearParameters();
+            }
+
+            result = stmt.executeBatch();
         } finally {
-            DbManager.close(conn, stmt, null);
+            DbManager.close(null, stmt, null);
         }
         return result;
     }

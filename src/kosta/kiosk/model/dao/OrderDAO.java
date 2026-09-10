@@ -1,5 +1,5 @@
 package kosta.kiosk.model.dao;
-
+import java.sql.Connection;
 import kosta.kiosk.model.dto.Order;
 import kosta.kiosk.model.dto.OrderDetail;
 
@@ -25,7 +25,7 @@ public interface OrderDAO {
      * @return 생성된 order_id
      *
      */
-    int insertOrder(Order order) throws SQLException;
+    int insertOrder(Connection conn, Order order) throws SQLException;
 
     /**
      * 주문번호로 주문 1건 조회. 반환되는 Order 의 orderDetailList 까지 채워진다.
@@ -43,9 +43,5 @@ public interface OrderDAO {
      * @return 주문상세 목록 (없으면 빈 리스트)
      *
      */
-    List<OrderDetail> selectOrderDetails(int orderId) throws SQLException;
-
-    int insertOrderDetails(OrderDetail orderDetail)throws SQLException;
-
-
+    List<OrderDetail> selectOrderDetailsByOrderId(int orderId) throws SQLException;
 }
