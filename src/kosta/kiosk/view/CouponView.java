@@ -2,23 +2,27 @@ package kosta.kiosk.view;
 
 import kosta.kiosk.model.dto.CouponDTO;
 import kosta.kiosk.model.dto.UserDTO;
-import kosta.kiosk.model.service.CouponService;
-import kosta.kiosk.model.service.CouponServiceImpl;
+import kosta.kiosk.controller.CouponController;
+import kosta.kiosk.controller.CouponControllerImpl;
 import kosta.kiosk.session.Session;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class CouponView {
 
-    private final CouponService couponService = new CouponServiceImpl();
+    private final CouponController couponController = new CouponControllerImpl();
     private final Scanner sc = new Scanner(System.in);
 
+    /**
+     * 결제 화면에서 호출: 보유 쿠폰을 여러 장 반복해서 사용할 수 있게 하고,
+     * 최종 할인 적용된 결제 금액을 반환한다.
+     * DB 관련 오류 처리는 Controller가 담당한다 (추후 FailView 연동 예정).
+     */
     public int applyCoupon(int orderAmount) {
         UserDTO user = Session.getInstance().getUser();
-        List<CouponDTO> coupons = new ArrayList<>(getCouponList(user.getUserId()));
+        List<CouponDTO> coupons = new ArrayList<>(couponController.getCouponList(user.getUserId()));
 
         while (true) {
             if (orderAmount <= 0) {
@@ -35,7 +39,7 @@ public class CouponView {
             System.out.println("현재 결제 예정 금액: " + orderAmount + "원");
             System.out.print("사용할 쿠폰번호를 입력하세요 (그만 사용: 0): ");
 
-            int couponId;
+            int couponId = 0;
             try {
                 couponId = Integer.parseInt(sc.nextLine());
             } catch (NumberFormatException e) {
@@ -55,23 +59,17 @@ public class CouponView {
             }
 
             int beforeAmount = orderAmount;
-            orderAmount = useCoupon(selected, orderAmount);
+            int actualDiscount = Math.min(selected.getPrice(), orderAmount);
+            orderAmount = couponController.useCoupon(selected, orderAmount);
 
             if (orderAmount != beforeAmount) {
+                System.out.println(actualDiscount + "원 할인이 적용되었습니다. (결제금액: " + orderAmount + "원)");
                 coupons.remove(selected);
             }
+            // 실패 시(금액이 그대로일 때)의 오류 메시지는 Controller/FailView가 담당
         }
 
         return orderAmount;
-    }
-
-    private List<CouponDTO> getCouponList(int userId) {
-        try {
-            return couponService.getCouponList(userId);
-        } catch (SQLException e) {
-            System.out.println("쿠폰 조회 중 오류가 발생했습니다: " + e.getMessage());
-            return List.of();
-        }
     }
 
     private void printCoupons(List<CouponDTO> coupons) {
@@ -88,17 +86,5 @@ public class CouponView {
             }
         }
         return null;
-    }
-
-    private int useCoupon(CouponDTO coupon, int orderAmount) {
-        try {
-            int actualDiscount = Math.min(coupon.getPrice(), orderAmount);
-            int discountedAmount = couponService.useCoupon(coupon, orderAmount);
-            System.out.println(actualDiscount + "원 할인이 적용되었습니다. (결제금액: " + discountedAmount + "원)");
-            return discountedAmount;
-        } catch (SQLException e) {
-            System.out.println("쿠폰 사용 중 오류가 발생했습니다: " + e.getMessage());
-            return orderAmount;
-        }
     }
 }
