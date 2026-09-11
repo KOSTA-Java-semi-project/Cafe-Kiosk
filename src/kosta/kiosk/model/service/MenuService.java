@@ -15,31 +15,31 @@ public class MenuService {
 	 * 메뉴 전체 조회
 	 */
 	
-	public List<Menu> menuSelectAll() throws SQLException {
-		return menuDAO.menuSelectAll();
+	public List<Menu> selectAllMenu() throws SQLException {
+		return menuDAO.selectAllMenu();
 	}
 	
 	/*
 	 * 메뉴 추가
 	 */
 	
-	public int menuAdd(Menu menu) throws SQLException {
-		return menuDAO.menuAdd(menu);
+	public int insertMenu(Menu menu) throws SQLException {
+		return menuDAO.insertMenu(menu);
 	}
 	
 	/*
 	 * 메뉴 번호로 메뉴 삭제
 	 */
 	
-	public void menuDelete(int menuId) throws SQLException {
-		menuDAO.menuDelete(menuId);
+	public void deleteMenuById(int menuId) throws SQLException {
+		menuDAO.deleteMenuById(menuId);
 	}
 	
 	/*
 	 * 메뉴 정보 수정
 	 */
 	
-	public int menuCorrection(Menu menu) throws SQLException {
-		return menuDAO.menuCorrection(menu);
+	public int updateMenuById(Menu menu) throws SQLException {
+		return menuDAO.updateMenuById(menu);
 	}
 }
