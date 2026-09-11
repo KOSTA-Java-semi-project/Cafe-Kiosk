@@ -3,7 +3,7 @@ package kosta.kiosk.view;
 public class StartView {
 
 	public static void main(String[] args) {
-		MenuView.menu();
+		MainView.menu();
 		System.out.println("-----------");
 	}
 
