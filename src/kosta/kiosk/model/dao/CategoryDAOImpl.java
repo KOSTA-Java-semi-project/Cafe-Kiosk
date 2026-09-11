@@ -42,7 +42,6 @@ public class CategoryDAOImpl implements CategoryDAO {
         return list;
     }
 
-    @Override
     public Category selectCategoryBycategoryId(int categoryId) throws SQLException {
 
         Connection con = null;

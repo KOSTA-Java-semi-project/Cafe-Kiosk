@@ -7,5 +7,4 @@ import kosta.kiosk.model.dto.Category;
 
 public interface CategoryDAO {
     List<Category> selectAllCategory() throws SQLException;
-    Category selectCategoryBycategoryId(int categoryId) throws SQLException;
 }
