@@ -60,7 +60,6 @@ public class MenuDAOImpl implements MenuDAO {
         return menuList;
     }
 
-
     // 카테고리별 메뉴 조회
     @Override
     public List<Menu> selectMenuListByCategoryId(int categoryId) throws SQLException {
@@ -78,35 +77,33 @@ public class MenuDAOImpl implements MenuDAO {
         ) {
 
             ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+            while (rs.next()) {
 
-                    Menu menu = new Menu();
+                Menu menu = new Menu();
 
-                    menu.setMenuId(rs.getInt("menu_id"));
-                    menu.setCategoryId(rs.getInt("category_id"));
-                    menu.setMenuName(rs.getString("menu_name"));
-                    menu.setDescription(rs.getString("description"));
-                    menu.setPrice(rs.getInt("price"));
+                menu.setMenuId(rs.getInt("menu_id"));
+                menu.setCategoryId(rs.getInt("category_id"));
+                menu.setMenuName(rs.getString("menu_name"));
+                menu.setDescription(rs.getString("description"));
+                menu.setPrice(rs.getInt("price"));
 
-                    menu.setHotIce(HotIce.valueOf(rs.getString("hot_ice")));
+                menu.setHotIce(HotIce.valueOf(rs.getString("hot_ice")));
 
-                    Timestamp createdAt = rs.getTimestamp("created_at");
-                    if (createdAt != null) {
-                        menu.setCreatedAt(createdAt.toLocalDateTime());
-                    }
-
-                    menu.setSoldout(rs.getBoolean("soldout"));
-
-                    menuList.add(menu);
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                if (createdAt != null) {
+                    menu.setCreatedAt(createdAt.toLocalDateTime());
                 }
+
+                menu.setSoldout(rs.getBoolean("soldout"));
+
+                menuList.add(menu);
             }
         }
 
         return menuList;
     }
-
 
     // 메뉴 추가
     // menu_id는 AUTO_INCREMENT
