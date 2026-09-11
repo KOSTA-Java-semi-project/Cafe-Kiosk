@@ -3,7 +3,6 @@ package kosta.kiosk.view;
 import kosta.kiosk.model.dto.CouponDTO;
 import kosta.kiosk.model.dto.UserDTO;
 import kosta.kiosk.controller.CouponController;
-import kosta.kiosk.controller.CouponControllerImpl;
 import kosta.kiosk.session.Session;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.Scanner;
 
 public class CouponView {
 
-    private final CouponController couponController = new CouponControllerImpl();
+    private final CouponController couponController = new CouponController();
     private final Scanner sc = new Scanner(System.in);
 
     /**

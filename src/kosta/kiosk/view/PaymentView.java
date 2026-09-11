@@ -2,14 +2,13 @@ package kosta.kiosk.view;
 
 import kosta.kiosk.model.dto.UserDTO;
 import kosta.kiosk.controller.UserController;
-import kosta.kiosk.controller.UserControllerImpl;
 import kosta.kiosk.session.Session;
 
 import java.util.Scanner;
 
 public class PaymentView {
 
-    private final UserController userController = new UserControllerImpl();
+    private final UserController userController = new UserController();
     private final CouponView couponView = new CouponView();
     private final Scanner sc = new Scanner(System.in);
 
