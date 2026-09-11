@@ -70,3 +70,4 @@ create table order_detail(
 
 alter table coupon alter column price set default 2000;
 alter table `order` modify column user_id int null;
+alter table manager rename column admin_id to manager_id;
