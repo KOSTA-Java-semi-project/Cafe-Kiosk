@@ -87,7 +87,7 @@ public class MenuDAOImpl implements MenuDAO {
             ps.setString(3, menu.getDescription());
             ps.setInt(4, menu.getPrice());
 
-            if (menu.getHotIce() != null) {
+            if (menu.getHotIce().equals(HotIce.HOT)) {
                 ps.setString(5, menu.getHotIce().name());
             } else {
                 ps.setNull(5, Types.VARCHAR);
