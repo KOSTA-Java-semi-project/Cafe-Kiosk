@@ -16,7 +16,7 @@ public class ManagerDAOImpl implements ManagerDAO {
         ManagerDTO manager = null;
 
         String sql =
-                "SELECT admin_id, name, id, password "
+                "SELECT manager_id, name, id, password "
               + "FROM manager "
               + "WHERE id = ? AND password = ?";
 
@@ -33,7 +33,7 @@ public class ManagerDAOImpl implements ManagerDAO {
                 if (rs.next()) {
 
                     manager = new ManagerDTO(
-                            rs.getInt("admin_id"),
+                            rs.getInt("manager_id"),
                             rs.getString("name"),
                             rs.getString("id"),
                             rs.getString("password")
