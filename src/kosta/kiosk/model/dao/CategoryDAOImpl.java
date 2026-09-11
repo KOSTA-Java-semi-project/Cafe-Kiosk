@@ -30,7 +30,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 
             while (rs.next()) {
                 Category category = new Category();
-                category.setCategoryId(rs.getInt("category_id0"));
+                category.setCategoryId(rs.getInt("category_id"));
                 category.setCategoryName(rs.getString("category_name"));
                 list.add(category);
 

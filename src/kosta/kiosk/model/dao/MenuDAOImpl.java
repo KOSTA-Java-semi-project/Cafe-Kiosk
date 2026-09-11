@@ -23,13 +23,13 @@ public class MenuDAOImpl implements MenuDAO {
 
         String sql =
                 "SELECT menu_id, category_id, menu_name, description, "
-                + "price, hot_ice, created_at, soldout "
-                + "FROM menu ORDER BY menu_id";
+                        + "price, hot_ice, created_at, soldout "
+                        + "FROM menu ORDER BY menu_id";
 
         try (
-            Connection con = DbManager.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()
+                Connection con = DbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
         ) {
 
             while (rs.next()) {
@@ -60,6 +60,50 @@ public class MenuDAOImpl implements MenuDAO {
         return menuList;
     }
 
+    // 카테고리별 메뉴 조회
+    @Override
+    public List<Menu> selectMenuListByCategoryId(int categoryId) throws SQLException {
+
+        List<Menu> menuList = new ArrayList<>();
+
+        String sql =
+                "SELECT menu_id, category_id, menu_name, description, "
+                        + "price, hot_ice, created_at, soldout "
+                        + "FROM menu WHERE category_id = ? ORDER BY menu_id";
+
+        try (
+                Connection con = DbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                Menu menu = new Menu();
+
+                menu.setMenuId(rs.getInt("menu_id"));
+                menu.setCategoryId(rs.getInt("category_id"));
+                menu.setMenuName(rs.getString("menu_name"));
+                menu.setDescription(rs.getString("description"));
+                menu.setPrice(rs.getInt("price"));
+
+                menu.setHotIce(HotIce.valueOf(rs.getString("hot_ice")));
+
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                if (createdAt != null) {
+                    menu.setCreatedAt(createdAt.toLocalDateTime());
+                }
+
+                menu.setSoldout(rs.getBoolean("soldout"));
+
+                menuList.add(menu);
+            }
+        }
+
+        return menuList;
+    }
 
     // 메뉴 추가
     // menu_id는 AUTO_INCREMENT
@@ -69,12 +113,12 @@ public class MenuDAOImpl implements MenuDAO {
 
         String sql =
                 "INSERT INTO menu "
-                + "(category_id, menu_name, description, price, hot_ice, soldout) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+                        + "(category_id, menu_name, description, price, hot_ice, soldout) "
+                        + "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (
-            Connection con = DbManager.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
+                Connection con = DbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
         ) {
 
             ps.setInt(1, menu.getCategoryId());
@@ -97,8 +141,8 @@ public class MenuDAOImpl implements MenuDAO {
                 "DELETE FROM menu WHERE menu_id = ?";
 
         try (
-            Connection con = DbManager.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
+                Connection con = DbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
         ) {
 
             ps.setInt(1, menuId);
@@ -121,17 +165,17 @@ public class MenuDAOImpl implements MenuDAO {
 
         String sql =
                 "UPDATE menu "
-                + "SET category_id = ?, "
-                + "menu_name = ?, "
-                + "description = ?, "
-                + "price = ?, "
-                + "hot_ice = ?, "
-                + "soldout = ? "
-                + "WHERE menu_id = ?";
+                        + "SET category_id = ?, "
+                        + "menu_name = ?, "
+                        + "description = ?, "
+                        + "price = ?, "
+                        + "hot_ice = ?, "
+                        + "soldout = ? "
+                        + "WHERE menu_id = ?";
 
         try (
-            Connection con = DbManager.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
+                Connection con = DbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)
         ) {
 
             ps.setInt(1, menu.getCategoryId());

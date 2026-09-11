@@ -3,8 +3,8 @@ package kosta.kiosk.view;
 public class StartView {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		MainView.menu();
+		System.out.println("-----------");
 	}
 
 }

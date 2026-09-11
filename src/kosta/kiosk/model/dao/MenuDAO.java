@@ -10,6 +10,9 @@ public interface MenuDAO {
     // 메뉴 전체 조회
     List<Menu> selectAllMenu() throws SQLException;
 
+    // 카테고리별 메뉴 조회
+    List<Menu> selectMenuListByCategoryId(int categoryId) throws SQLException;
+
     // 메뉴 추가
     int insertMenu(Menu menu) throws SQLException;
 
