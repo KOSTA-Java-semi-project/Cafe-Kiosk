@@ -30,7 +30,6 @@ public class OrderController {
         carts.add(detail);
     }
 
-    // 장바구니 비어있으면 null 반환
     public static Integer checkout() throws SQLException {
         List<OrderDetail> carts = Session.getInstance().getCarts();
         if (carts.isEmpty()) {
