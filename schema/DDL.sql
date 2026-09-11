@@ -67,3 +67,6 @@ create table order_detail(
     foreign key (order_id) references `order`(order_id),
     foreign key (menu_id) references menu(menu_id)
 );
+
+alter table coupon alter column price set default 2000;
+alter table `order` modify column user_id int null;
