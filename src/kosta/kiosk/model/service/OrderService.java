@@ -28,13 +28,7 @@ public class OrderService {
     }
 
     public List<Menu> getMenuListByCategoryId(int categoryId) throws SQLException {
-        List<Menu> result = new ArrayList<>();
-        for (Menu menu : menuDAO.selectAllMenu()) {
-            if (menu.getCategoryId() == categoryId) {
-                result.add(menu);
-            }
-        }
-        return result;
+        return menuDAO.selectMenuListByCategoryId(categoryId);
     }
 
     public int insertOrder(Integer userId, List<OrderDetail> orderDetailList) throws SQLException {
