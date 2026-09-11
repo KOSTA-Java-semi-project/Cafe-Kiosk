@@ -50,8 +50,14 @@ public class OrderDAOImpl implements OrderDAO {
             con.setAutoCommit(false);
 
             stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            stmt.setInt(1, order.getUserId());
+            Integer userId = order.getUserId();
+            if (userId != null) {
+                stmt.setInt(1, userId);
+            } else {
+                stmt.setNull(1, Types.INTEGER);
+            }
             stmt.setInt(2, order.getSum());
+
             result = stmt.executeUpdate();
             if (result == 0) {
                 throw new SQLException("주문 등록 실패");
