@@ -2,7 +2,7 @@ package kosta.kiosk.model.dto;
 
 public class ManagerDTO {
 	
-	private int adminId;
+	private int managerId;
 	private String name;
 	private String id;
 	private String password;
@@ -11,8 +11,8 @@ public class ManagerDTO {
 		
 	}
 
-	public ManagerDTO(int adminId, String name, String id, String password) {
-		this.adminId = adminId;
+	public ManagerDTO(int managerId, String name, String id, String password) {
+		this.managerId = managerId;
 		this.name = name;
 		this.id = id;
 		this.password = password;
@@ -25,11 +25,11 @@ public class ManagerDTO {
 	}
 
 	public int getAdminId() {
-		return adminId;
+		return managerId;
 	}
 
 	public void setAdminId(int adminId) {
-		this.adminId = adminId;
+		this.managerId = adminId;
 	}
 
 	public String getName() {
@@ -58,7 +58,7 @@ public class ManagerDTO {
 	
 	@Override
 	public String toString() {
-		return "ManagerDTO [adminId=" + adminId
+		return "ManagerDTO [adminId=" + managerId
 				+ ", name=" + name
 				+ ", id=" + id + "]";
 	}
