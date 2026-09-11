@@ -24,11 +24,11 @@ public class ManagerDTO {
 	
 	}
 
-	public int getAdminId() {
+	public int getManagerId() {
 		return managerId;
 	}
 
-	public void setAdminId(int adminId) {
+	public void setManagerId(int adminId) {
 		this.managerId = adminId;
 	}
 
