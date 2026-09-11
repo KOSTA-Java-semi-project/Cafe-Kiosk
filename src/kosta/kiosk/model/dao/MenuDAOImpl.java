@@ -1,7 +1,7 @@
 package kosta.kiosk.model.dao;
 
 import kosta.kiosk.model.dto.Menu;
-import kosta.kiosk.model.dto.Menu.HotIce;
+import kosta.kiosk.model.dto.HotIce;
 import kosta.kiosk.util.DbManager;
 
 import java.sql.Connection;
@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,12 +42,7 @@ public class MenuDAOImpl implements MenuDAO {
                 menu.setDescription(rs.getString("description"));
                 menu.setPrice(rs.getInt("price"));
 
-                // hot_ice가 NULL일 경우를 대비
-                String hotIce = rs.getString("hot_ice");
-
-                if (hotIce != null) {
-                    menu.setHotIce(HotIce.valueOf(hotIce));
-                }
+                menu.setHotIce(HotIce.valueOf(rs.getString("hot_ice")));
 
                 // DB의 created_at 값을 LocalDateTime으로 변환
                 Timestamp createdAt = rs.getTimestamp("created_at");
@@ -87,13 +81,7 @@ public class MenuDAOImpl implements MenuDAO {
             ps.setString(2, menu.getMenuName());
             ps.setString(3, menu.getDescription());
             ps.setInt(4, menu.getPrice());
-
-            if (menu.getHotIce().equals(HotIce.HOT)) {
-                ps.setString(5, menu.getHotIce().name());
-            } else {
-                ps.setNull(5, Types.VARCHAR);
-            }
-
+            ps.setString(5, menu.getHotIce().name());
             ps.setBoolean(6, menu.isSoldout());
 
             return ps.executeUpdate();
@@ -150,13 +138,7 @@ public class MenuDAOImpl implements MenuDAO {
             ps.setString(2, menu.getMenuName());
             ps.setString(3, menu.getDescription());
             ps.setInt(4, menu.getPrice());
-
-            if (menu.getHotIce() != null) {
-                ps.setString(5, menu.getHotIce().name());
-            } else {
-                ps.setNull(5, Types.VARCHAR);
-            }
-
+            ps.setString(5, menu.getHotIce().name());
             ps.setBoolean(6, menu.isSoldout());
             ps.setInt(7, menu.getMenuId());
 
