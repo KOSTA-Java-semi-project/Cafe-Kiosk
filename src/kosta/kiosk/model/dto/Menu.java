@@ -4,10 +4,6 @@ import java.time.LocalDateTime;
 
 public class Menu {
 
-    public enum HotIce {
-        HOT, ICE
-    }
-
     private int menuId;
     private int categoryId;
     private String menuName;
