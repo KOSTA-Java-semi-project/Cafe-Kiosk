@@ -1,11 +1,100 @@
 package kosta.kiosk.view;
-import kosta.kiosk.model.dto.Category;
-import kosta.kiosk.model.dto.IceLevel;
-import kosta.kiosk.model.dto.Menu;
-import kosta.kiosk.model.dto.Size;
+import kosta.kiosk.controller.OrderController;
+import kosta.kiosk.model.dto.*;
 
+import java.sql.SQLException;
 import java.util.List;
-    public class OrderView {
+import java.util.Scanner;
+
+public class OrderView {
+        private static Scanner sc = new Scanner(System.in);
+
+        public static void orderMenu() {
+            while (true) {
+                List<Category> categoryList;
+                try {
+                    categoryList = OrderController.getCategoryList();
+                } catch (SQLException e) {
+                    System.out.println("카테고리 조회 실패: " + e.getMessage());
+                    return;
+                }
+
+                printCategoryList(categoryList);
+                int categoryChoice = Integer.parseInt(sc.nextLine());
+                if (categoryChoice == 0) return;
+
+                selectMenu(categoryChoice);
+            }
+        }
+
+        private static void selectMenu(int categoryId) {
+            List<Menu> menuList;
+            try {
+                menuList = OrderController.getMenuListByCategoryId(categoryId);
+            } catch (SQLException e) {
+                System.out.println("메뉴 조회 실패: " + e.getMessage());
+                return;
+            }
+
+            printMenuList(menuList);
+            int menuChoice = Integer.parseInt(sc.nextLine());
+            if (menuChoice == 0) return;
+
+            Menu selectedMenu = menuList.stream()
+                    .filter(m -> m.getMenuId() == menuChoice)
+                    .findFirst()
+                    .orElse(null);
+            if (selectedMenu == null || selectedMenu.isSoldout()) {
+                System.out.println("선택할 수 없는 메뉴입니다.");
+                return;
+            }
+
+            selectOptions(selectedMenu);
+        }
+
+        private static void selectOptions(Menu menu) {
+            printSizeOption();
+            int sizeChoice = Integer.parseInt(sc.nextLine());
+            Size size = Size.values()[sizeChoice - 1];
+
+            printShotOption();
+            int shot = Integer.parseInt(sc.nextLine());
+
+            IceLevel ice = null;
+            if (menu.getHotIce() == HotIce.ICE) {
+                printIceOption();
+                int iceChoice = Integer.parseInt(sc.nextLine());
+                ice = IceLevel.values()[iceChoice - 1];
+            }
+
+            printSyrupOption();
+            int syrup = Integer.parseInt(sc.nextLine());
+
+            printAmountOption();
+            int amount = Integer.parseInt(sc.nextLine());
+
+            OrderController.addToCart(menu, size, shot, ice, syrup, amount);
+            System.out.println(menu.getMenuName() + " " + amount + "잔 담았습니다.");
+        }
+
+        public static void checkout() {
+            try {
+                Integer orderId = OrderController.checkout();
+                if (orderId == null) {
+                    System.out.println("장바구니가 비어있습니다.");
+                    return;
+                }
+                printOrderComplete(orderId);
+            } catch (SQLException e) {
+                System.out.println("주문 실패: " + e.getMessage());
+            }
+        }
+
+        public static void printOrderComplete(int orderId) {
+            System.out.println("=========================================");
+            System.out.println("        주문이 완료되었습니다! (주문번호 " + orderId + ")");
+            System.out.println("=========================================");
+        }
 
         // 카테고리 선택 화면 출력
         public static void printCategoryList(List<Category> categoryList) {
