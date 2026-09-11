@@ -2,14 +2,13 @@ package kosta.kiosk.controller;
 
 import kosta.kiosk.model.dto.CouponDTO;
 import kosta.kiosk.model.service.CouponService;
-import kosta.kiosk.model.service.CouponServiceImpl;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class CouponController {
 
-    private final CouponService couponService = new CouponServiceImpl();
+    private final CouponService couponService = new CouponService();
 
     // 특정 회원의 보유 쿠폰 목록 조회. 오류가 나면 빈 목록 반환.
     public List<CouponDTO> getCouponList(int userId) {
