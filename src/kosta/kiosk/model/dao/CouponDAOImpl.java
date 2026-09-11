@@ -46,7 +46,7 @@ public class CouponDAOImpl implements CouponDAO {
 
     @Override
     public int insertCoupon(CouponDTO couponDTO) throws SQLException {
-        String sql = "INSERT INTO coupon (user_id, price) VALUES (?, ?)";
+        String sql = "INSERT INTO coupon (user_id) VALUES (?)";
 
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -57,7 +57,6 @@ public class CouponDAOImpl implements CouponDAO {
             con = DbManager.getConnection();
             pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, couponDTO.getUserId());
-            pstmt.setInt(2, couponDTO.getPrice());
 
             pstmt.executeUpdate();
 
