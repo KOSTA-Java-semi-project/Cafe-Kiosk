@@ -10,25 +10,13 @@ import kosta.kiosk.util.DbManager;
 
 public class ManagerDAOImpl implements ManagerDAO {
 
-    private static ManagerDAO instance = new ManagerDAOImpl();
-
-    private ManagerDAOImpl() {
-    }
-
-    public static ManagerDAO getInstance() {
-        return instance;
-    }
-
-    /**
-     * Manager login
-     */
     @Override
     public ManagerDTO login(String id, String password) throws SQLException {
 
         ManagerDTO manager = null;
 
         String sql =
-                "SELECT managerId, name, id, password "
+                "SELECT admin_id, name, id, password "
               + "FROM manager "
               + "WHERE id = ? AND password = ?";
 
@@ -44,19 +32,12 @@ public class ManagerDAOImpl implements ManagerDAO {
 
                 if (rs.next()) {
 
-                    manager = new ManagerDTO();
-
-                    manager.setManagerId(
-                            rs.getInt("managerId"));
-
-                    manager.setName(
-                            rs.getString("name"));
-
-                    manager.setId(
-                            rs.getString("id"));
-
-                    manager.setPassword(
-                            rs.getString("password"));
+                    manager = new ManagerDTO(
+                            rs.getInt("admin_id"),
+                            rs.getString("name"),
+                            rs.getString("id"),
+                            rs.getString("password")
+                    );
                 }
             }
         }
