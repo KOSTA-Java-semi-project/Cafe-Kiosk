@@ -28,8 +28,8 @@ public class ManagerDTO {
 		return managerId;
 	}
 
-	public void setManagerId(int adminId) {
-		this.managerId = adminId;
+	public void setManagerId(int managerId) {
+		this.managerId = managerId;
 	}
 
 	public String getName() {
@@ -58,7 +58,7 @@ public class ManagerDTO {
 	
 	@Override
 	public String toString() {
-		return "ManagerDTO [adminId=" + managerId
+		return "ManagerDTO [managerId=" + managerId
 				+ ", name=" + name
 				+ ", id=" + id + "]";
 	}
