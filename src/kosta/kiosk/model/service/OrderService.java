@@ -1,7 +1,5 @@
 package kosta.kiosk.model.service;
 
-import kosta.kiosk.model.dao.*;
-import kosta.kiosk.model.dto.Category;
 import kosta.kiosk.model.dao.CategoryDAO;
 import kosta.kiosk.model.dao.CategoryDAOImpl;
 import kosta.kiosk.model.dao.MenuDAO;
@@ -64,20 +62,5 @@ public class OrderService {
 
     public Order selectOrderByOrderId(int orderId) throws SQLException {
         return orderDAO.selectOrderByOrderId(orderId);
-    }
-    private CategoryDAO categoryDAO = new CategoryDAOImpl();
-
-    public List<Category> getCategoryList() throws SQLException {
-        return categoryDAO.selectAllCategory();
-    }
-
-    public List<Menu> getMenuListByCategoryId(int categoryId) throws SQLException {
-        List<Menu> result = new ArrayList<>();
-        for (Menu menu : menuDAO.selectAllMenu()) {
-            if (menu.getCategoryId() == categoryId) {
-                result.add(menu);
-            }
-        }
-        return result;
     }
 }
