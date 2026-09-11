@@ -9,7 +9,7 @@ import java.util.Map;
 public class MenuView {
 
     // 전체 메뉴판 출력 (카테고리별 그룹)
-public void printMenuBoard(Map<Category, List<Menu>> menuMap) {
+public static void printMenuBoard(Map<Category, List<Menu>> menuMap) {
     System.out.println("=========================================");
     System.out.println("                 전체 메뉴");
     System.out.println("=========================================");
