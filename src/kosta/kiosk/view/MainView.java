@@ -21,7 +21,7 @@ public class MainView {
 				MainView.login();// TODO 로그인 재훈님 View 함수 호출
 				break;
 			case 2 :
-				OrderView.orderMenu();
+				MenuView.startOrder();
 				break;
 			case 3 :
 				// TODO 건우님 View 함수호출
