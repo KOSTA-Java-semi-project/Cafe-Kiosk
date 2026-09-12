@@ -61,4 +61,8 @@ public class OrderService {
     public Order selectOrderByOrderId(int orderId) throws SQLException {
         return orderDAO.selectOrderByOrderId(orderId);
     }
+
+    public List<Menu> getAllMenuList() throws SQLException {
+        return menuDAO.selectAllMenu();
+    }
 }

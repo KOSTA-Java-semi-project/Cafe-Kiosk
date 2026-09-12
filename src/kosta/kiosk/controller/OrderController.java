@@ -61,4 +61,8 @@ public class OrderController {
         carts.clear();
         return orderId;
     }
+
+    public static List<Menu> getAllMenuList() throws SQLException {
+        return orderService.getAllMenuList();
+    }
 }

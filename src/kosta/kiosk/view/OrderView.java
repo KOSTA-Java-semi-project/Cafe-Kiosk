@@ -28,21 +28,25 @@ private static final Scanner sc = new Scanner(System.in);
      * 장바구니에 담는다.
      */
     public static void selectOptionsAndAddToCart(Menu menu) {
-        System.out.println("\n[ " + menu.getMenuName() + " ] 옵션을 선택합니다.");
+        System.out.println("\n[ " + menu.getMenuName() + " ] 옵션을 선택합니다. (c 입력 시 취소)");
 
-        Size size = inputSize();
+        try {
+            Size size = inputSize();
 
-        IceLevel ice = null;
-        if (menu.getHotIce() == HotIce.ICE) {
-            ice = inputIceLevel();
+            IceLevel ice = null;
+            if (menu.getHotIce() == HotIce.ICE) {
+                ice = inputIceLevel();
+            }
+
+            int shot = inputCount(OrderView::printShotOption);
+            int syrup = inputCount(OrderView::printSyrupOption);
+            int amount = inputAmount();
+
+            OrderController.addToCart(menu, size, shot, ice, syrup, amount);
+            System.out.println(menu.getMenuName() + " " + amount + "잔이 장바구니에 담겼습니다.\n");
+        } catch (CancelledException e) {
+            System.out.println("메뉴 선택을 취소했습니다.\n");
         }
-
-        int shot = inputCount(OrderView::printShotOption);
-        int syrup = inputCount(OrderView::printSyrupOption);
-        int amount = inputAmount();
-
-        OrderController.addToCart(menu, size, shot, ice, syrup, amount);
-        System.out.println(menu.getMenuName() + " " + amount + "잔이 장바구니에 담겼습니다.\n");
     }
 
     /**
@@ -96,6 +100,9 @@ private static final Scanner sc = new Scanner(System.in);
         while (true) {
             printSizeOption();
             String line = sc.nextLine().trim();
+            if (line.equalsIgnoreCase("c")) {
+                throw new CancelledException();
+            }
             Integer choice = parseIntOrNull(line);
             Size[] sizes = Size.values();
             if (choice != null && choice >= 1 && choice <= sizes.length) {
@@ -109,6 +116,9 @@ private static final Scanner sc = new Scanner(System.in);
         while (true) {
             printIceOption();
             String line = sc.nextLine().trim();
+            if (line.equalsIgnoreCase("c")) {
+                throw new CancelledException();
+            }
             Integer choice = parseIntOrNull(line);
             IceLevel[] iceLevels = IceLevel.values();
             if (choice != null && choice >= 1 && choice <= iceLevels.length) {
@@ -122,6 +132,9 @@ private static final Scanner sc = new Scanner(System.in);
         while (true) {
             printPrompt.run();
             String line = sc.nextLine().trim();
+            if (line.equalsIgnoreCase("c")) {
+                throw new CancelledException();
+            }
             Integer value = parseIntOrNull(line);
             if (value != null && value >= 0) {
                 return value;
@@ -134,6 +147,9 @@ private static final Scanner sc = new Scanner(System.in);
         while (true) {
             printAmountOption();
             String line = sc.nextLine().trim();
+            if (line.equalsIgnoreCase("c")) {
+                throw new CancelledException();
+            }
             Integer value = parseIntOrNull(line);
             if (value != null && value >= 1) {
                 return value;
@@ -161,6 +177,8 @@ private static final Scanner sc = new Scanner(System.in);
         for (int i = 0; i < sizes.length; i++) {
             System.out.println((i + 1) + ". " + sizes[i].name());
         }
+        System.out.println("-----------------------------------------");
+        System.out.println("c: 취소하고 메뉴 화면으로 돌아가기");
         System.out.println("=========================================");
         System.out.print("선택 > ");
     }
@@ -174,6 +192,8 @@ private static final Scanner sc = new Scanner(System.in);
         for (int i = 0; i < iceLevels.length; i++) {
             System.out.println((i + 1) + ". " + iceLevels[i].name());
         }
+        System.out.println("-----------------------------------------");
+        System.out.println("c: 취소하고 메뉴 화면으로 돌아가기");
         System.out.println("=========================================");
         System.out.print("선택 > ");
     }
@@ -182,14 +202,15 @@ private static final Scanner sc = new Scanner(System.in);
     private static void printShotOption() {
         System.out.println("=========================================");
         System.out.println("         추가할 샷 개수를 입력하세요 (없으면 0)");
+        System.out.println("         (c: 취소하고 메뉴 화면으로 돌아가기)");
         System.out.println("=========================================");
         System.out.print("입력 > ");
     }
-
     // 시럽 추가 개수 입력 화면
     private static void printSyrupOption() {
         System.out.println("=========================================");
         System.out.println("        추가할 시럽 개수를 입력하세요 (없으면 0)");
+        System.out.println("        (c: 취소하고 메뉴 화면으로 돌아가기)");
         System.out.println("=========================================");
         System.out.print("입력 > ");
     }
@@ -198,8 +219,12 @@ private static final Scanner sc = new Scanner(System.in);
     private static void printAmountOption() {
         System.out.println("=========================================");
         System.out.println("                수량을 입력하세요");
+        System.out.println("                (c: 취소하고 메뉴 화면으로 돌아가기)");
         System.out.println("=========================================");
         System.out.print("입력 > ");
+    }
+    // cancle 입력
+    private static class CancelledException extends RuntimeException {
     }
     public static void main(String[] args) {
         MenuView.startOrder();

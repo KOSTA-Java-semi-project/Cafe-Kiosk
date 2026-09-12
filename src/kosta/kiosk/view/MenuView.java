@@ -3,7 +3,9 @@ package kosta.kiosk.view;
 import kosta.kiosk.controller.OrderController;
 import kosta.kiosk.model.dto.Category;
 import kosta.kiosk.model.dto.Menu;
-
+import kosta.kiosk.model.dto.OrderDetail;
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
@@ -53,9 +55,15 @@ public class MenuView {
             printMenuMainScreen(categoryList, currentCategory, menuList);
             String input = sc.nextLine().trim();
 
+
             if (input.equals("0")) {
                 return; // 이전 화면으로
             }
+            if (input.equalsIgnoreCase("v")) {
+                printCart();
+                continue;
+            }
+
 
             if (input.equalsIgnoreCase("o")) {
                 boolean orderCompleted = OrderView.checkout();
@@ -85,9 +93,53 @@ public class MenuView {
                 continue;
             }
 
+
             // 옵션 선택(사이즈/얼음/샷/시럽/수량) -> 장바구니 담기. 끝나면 자연스럽게 이 while문(메뉴 화면)으로 복귀.
             OrderView.selectOptionsAndAddToCart(selectedMenu);
         }
+    }
+
+    private static void printCart() {
+        List<OrderDetail> cart = OrderController.getCart();
+        if (cart.isEmpty()) {
+            System.out.println("장바구니가 비어있습니다.\n");
+            return;
+        }
+
+        List<Menu> allMenus;
+        try {
+            allMenus = OrderController.getAllMenuList();
+        } catch (SQLException e) {
+            System.out.println("장바구니 조회 실패: " + e.getMessage());
+            return;
+        }
+        Map<Integer, Menu> menuMap = new HashMap<>();
+        for (Menu menu : allMenus) {
+            menuMap.put(menu.getMenuId(), menu);
+        }
+
+        System.out.println("=========================================");
+        System.out.println("               장바구니 목록");
+        System.out.println("=========================================");
+        int i = 1;
+        for (OrderDetail detail : cart) {
+            Menu menu = menuMap.get(detail.getMenuId());
+            String name = (menu != null) ? menu.getMenuName() : "알 수 없는 메뉴";
+            String iceText = (detail.getIce() != null) ? ", 얼음:" + detail.getIce() : "";
+            System.out.println(i + ". " + name + " x " + detail.getAmount()
+                    + " (사이즈:" + detail.getSize() + iceText
+                    + ", 샷:" + detail.getShot() + ", 시럽:" + detail.getSyrup() + ")");
+            i++;
+        }
+
+        try {
+            int sum = OrderController.calculateCartSum(cart);
+            System.out.println("-----------------------------------------");
+            System.out.println("합계: " + sum + "원");
+        } catch (SQLException e) {
+            // 합계 계산 실패해도 목록은 이미 보여줬으니 무시
+        }
+        System.out.println("=========================================\n");
     }
 
     private static Category findCategoryById(List<Category> categoryList, String idText) {
@@ -151,7 +203,7 @@ public class MenuView {
         System.out.println("현재 장바구니: " + cartCount + "건");
         System.out.println("=========================================");
         System.out.println("메뉴번호: 메뉴 선택  |  c+카테고리번호: 카테고리 이동 (예: c2)");
-        System.out.println("o: 주문하기  |  0: 이전 화면으로");
+        System.out.println("v: 장바구니 보기  |  o: 주문하기  |  0: 이전 화면으로");
         System.out.print("선택 > ");
     }
 }
