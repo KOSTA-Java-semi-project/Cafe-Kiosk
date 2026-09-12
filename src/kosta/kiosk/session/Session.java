@@ -10,7 +10,7 @@ public class Session {
 	private static final Session instance = new Session();
 
 	private UserDTO user;
-	private List<OrderDetail> carts; // 장바구니
+	private List<OrderDetail> carts=new ArrayList<>(); // 장바구니
 
 	private Session() {
 	}
@@ -29,12 +29,11 @@ public class Session {
 
 	public void login(UserDTO user) {
 		this.user = user;
-		this.carts = new ArrayList<>();
 	}
 
 	public void logout() {
 		this.user = null;
-		this.carts = null;
+		this.carts = new ArrayList<>();
 	}
 
 	@Override

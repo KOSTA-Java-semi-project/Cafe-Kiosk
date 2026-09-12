@@ -18,13 +18,13 @@ public class MainView {
 			int menu = Integer.parseInt(sc.nextLine());
 			switch(menu) {
 			case 1 :
-				MainView.login();// 로그인
+				MainView.login();// TODO 로그인 재훈님 View 함수 호출
 				break;
 			case 2 :
-				//MenuView.register(); // 가입
+				OrderView.orderMenu();
 				break;
 			case 3 :
-				
+				// TODO 건우님 View 함수호출
 				break;
 
 			case 9 : 
