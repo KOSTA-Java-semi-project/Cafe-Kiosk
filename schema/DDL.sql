@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS Kosta_kiosk;
 use Kosta_kiosk;
 
 show tables;
