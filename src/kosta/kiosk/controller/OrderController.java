@@ -10,18 +10,30 @@ import kosta.kiosk.model.service.OrderService;
 import kosta.kiosk.session.Session;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 public class OrderController {
 
     private static final OrderService orderService = new OrderService();
 
-    public static List<Category> getCategoryList() throws SQLException {
-        return orderService.getCategoryList();
+    // OrderController.java
+    public static List<Category> getCategoryList() {
+        try {
+            return orderService.getCategoryList();
+        } catch (SQLException e) {
+            System.out.println("카테고리 조회 실패: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
-    public static List<Menu> getMenuListByCategoryId(int categoryId) throws SQLException {
-        return orderService.getMenuListByCategoryId(categoryId);
+    public static List<Menu> getMenuListByCategoryId(int categoryId) {
+        try {
+            return orderService.getMenuListByCategoryId(categoryId);
+        } catch (SQLException e) {
+            System.out.println("메뉴 조회 실패: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     public static void addToCart(Menu menu, Size size, int shot, IceLevel ice, int syrup, int amount) {
@@ -44,8 +56,13 @@ public class OrderController {
      * * 결제 화면으로 넘길 금액을 미리 계산할 때 사용한다.
     **/
 
-    public static int calculateCartSum(List<OrderDetail> cart) throws SQLException {
-        return orderService.calculateSum(cart);
+    public static int calculateCartSum(List<OrderDetail> cart) {
+        try {
+            return orderService.calculateSum(cart);
+        } catch (SQLException e) {
+            System.out.println("합계 계산 실패: " + e.getMessage());
+            return 0;
+        }
     }
 
     public static Integer checkout() throws SQLException {
@@ -62,7 +79,12 @@ public class OrderController {
         return orderId;
     }
 
-    public static List<Menu> getAllMenuList() throws SQLException {
-        return orderService.getAllMenuList();
+    public static List<Menu> getAllMenuList() {
+        try {
+            return orderService.getAllMenuList();
+        } catch (SQLException e) {
+            System.out.println("전체 메뉴 조회 실패: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 }

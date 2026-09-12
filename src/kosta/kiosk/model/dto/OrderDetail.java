@@ -114,4 +114,13 @@ public class OrderDetail {
                 ", syrup=" + syrup +
                 '}';
     }
+
+    /** 화면 표시용 요약 문자열. menuId만으로는 이름을 알 수 없어 Menu를 인자로 받는다. */
+    public String describe(Menu menu) {
+        String name = (menu != null) ? menu.getMenuName() : "알 수 없는 메뉴";
+        String iceText = (ice != null) ? ", 얼음:" + ice : "";
+        return name + " x " + amount
+                + " (사이즈:" + size + iceText
+                + ", 샷:" + shot + ", 시럽:" + syrup + ")";
+    }
 }

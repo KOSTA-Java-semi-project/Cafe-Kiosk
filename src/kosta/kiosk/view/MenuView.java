@@ -6,7 +6,6 @@ import kosta.kiosk.model.dto.Menu;
 import kosta.kiosk.model.dto.OrderDetail;
 import java.util.HashMap;
 import java.util.Map;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,13 +26,7 @@ public class MenuView {
      * 주문 화면 진입점. MainView 등에서 호출한다.
      */
     public static void startOrder() {
-        List<Category> categoryList;
-        try {
-            categoryList = OrderController.getCategoryList();
-        } catch (SQLException e) {
-            System.out.println("카테고리 조회 실패: " + e.getMessage());
-            return;
-        }
+        List<Category> categoryList = OrderController.getCategoryList();
 
         if (categoryList.isEmpty()) {
             System.out.println("등록된 카테고리가 없습니다.");
@@ -44,13 +37,7 @@ public class MenuView {
         Category currentCategory = categoryList.get(0);
 
         while (true) {
-            List<Menu> menuList;
-            try {
-                menuList = OrderController.getMenuListByCategoryId(currentCategory.getCategoryId());
-            } catch (SQLException e) {
-                System.out.println("메뉴 조회 실패: " + e.getMessage());
-                return;
-            }
+            List<Menu> menuList = OrderController.getMenuListByCategoryId(currentCategory.getCategoryId());
 
             printMenuMainScreen(categoryList, currentCategory, menuList);
             String input = sc.nextLine().trim();
@@ -106,13 +93,7 @@ public class MenuView {
             return;
         }
 
-        List<Menu> allMenus;
-        try {
-            allMenus = OrderController.getAllMenuList();
-        } catch (SQLException e) {
-            System.out.println("장바구니 조회 실패: " + e.getMessage());
-            return;
-        }
+        List<Menu> allMenus = OrderController.getAllMenuList();
         Map<Integer, Menu> menuMap = new HashMap<>();
         for (Menu menu : allMenus) {
             menuMap.put(menu.getMenuId(), menu);
@@ -124,21 +105,13 @@ public class MenuView {
         int i = 1;
         for (OrderDetail detail : cart) {
             Menu menu = menuMap.get(detail.getMenuId());
-            String name = (menu != null) ? menu.getMenuName() : "알 수 없는 메뉴";
-            String iceText = (detail.getIce() != null) ? ", 얼음:" + detail.getIce() : "";
-            System.out.println(i + ". " + name + " x " + detail.getAmount()
-                    + " (사이즈:" + detail.getSize() + iceText
-                    + ", 샷:" + detail.getShot() + ", 시럽:" + detail.getSyrup() + ")");
+            System.out.println(i + ". " + detail.describe(menu));
             i++;
         }
 
-        try {
-            int sum = OrderController.calculateCartSum(cart);
-            System.out.println("-----------------------------------------");
-            System.out.println("합계: " + sum + "원");
-        } catch (SQLException e) {
-            // 합계 계산 실패해도 목록은 이미 보여줬으니 무시
-        }
+        int sum = OrderController.calculateCartSum(cart);
+        System.out.println("-----------------------------------------");
+        System.out.println("합계: " + sum + "원");
         System.out.println("=========================================\n");
     }
 
