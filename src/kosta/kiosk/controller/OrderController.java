@@ -30,6 +30,24 @@ public class OrderController {
         carts.add(detail);
     }
 
+  /**
+   *
+   * 현재 장바구니(주문 목록)를 조회한다. MenuView/OrderView에서 화면에 보여주거나
+   * 수량/금액 계산 등에 사용한다. (View가 Session에 직접 접근하지 않도록 이 메서드로 노출)
+   * */
+    public static List<OrderDetail> getCart() {
+        return Session.getInstance().getCarts();
+    }
+
+    /**
+     * * 장바구니(주문 예정 목록)의 합계 금액을 계산한다. "주문하기" 확정 전에
+     * * 결제 화면으로 넘길 금액을 미리 계산할 때 사용한다.
+    **/
+
+    public static int calculateCartSum(List<OrderDetail> cart) throws SQLException {
+        return orderService.calculateSum(cart);
+    }
+
     public static Integer checkout() throws SQLException {
         List<OrderDetail> carts = Session.getInstance().getCarts();
         if (carts.isEmpty()) {

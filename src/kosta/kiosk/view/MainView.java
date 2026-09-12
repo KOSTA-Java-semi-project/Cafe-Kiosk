@@ -7,27 +7,27 @@ import kosta.kiosk.session.Session;
 
 public class MainView {
 	private static Scanner sc = new Scanner(System.in);
-	
+
 	public static void menu() {
 		while(true) {
 			Session ss = Session.getInstance();
 //			System.out.println("ss.getSet() = "+ss.getSet());
-			
+
 			MainView.printMenu();
-			
+
 			int menu = Integer.parseInt(sc.nextLine());
 			switch(menu) {
 			case 1 :
 				//MenuView.register(); // 가입
 				break;
 			case 2 :
-				MainView.login();// 로그인
+
 				break;
 			case 3 :
-				
+
 				break;
 
-			case 9 : 
+			case 9 :
 				System.exit(0);
 			}
 		}
@@ -50,7 +50,7 @@ public class MainView {
 		 System.out.print("이름 : ");
 		 String name = sc.nextLine();
 		 
-		 UserController.login(phone, name); 
+		 UserController.login(phone);
 	}
 	
 	/**

@@ -10,7 +10,7 @@ public class Session {
 	private static final Session instance = new Session();
 
 	private UserDTO user;
-	private List<OrderDetail> carts; // 장바구니
+	private List<OrderDetail> carts = new ArrayList<>(); // 장바구니 (비회원도 담을 수 있도록 기본값으로 초기화)
 
 	private Session() {
 	}
@@ -34,7 +34,7 @@ public class Session {
 
 	public void logout() {
 		this.user = null;
-		this.carts = null;
+		this.carts = new ArrayList<>(); // null 대신 빈 장바구니로 초기화 -> 다음 손님(비회원 포함) 바로 이용 가능
 	}
 
 	@Override
