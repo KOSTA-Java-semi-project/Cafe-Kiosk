@@ -12,16 +12,16 @@ public class MainView {
 		while(true) {
 			Session ss = Session.getInstance();
 //			System.out.println("ss.getSet() = "+ss.getSet());
-			
+
 			MainView.printMenu();
-			
+
 			int menu = Integer.parseInt(sc.nextLine());
 			switch(menu) {
 			case 1 :
 				MainView.login();// TODO 로그인 재훈님 View 함수 호출
 				break;
 			case 2 :
-				OrderView.orderMenu();
+				MenuView.startOrder();
 				break;
 			case 3 :
 				// TODO 건우님 View 함수호출
@@ -47,7 +47,7 @@ public class MainView {
 		 System.out.print("전화번호 : ");
 		 String phone = sc.nextLine();
 		 
-		 UserController.login(phone); 
+		 UserController.login(phone);
 	}
 	
 	/**
