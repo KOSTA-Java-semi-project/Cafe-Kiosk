@@ -75,7 +75,7 @@ public class MenuView {
                 continue;
             }
 
-            Menu selectedMenu = findMenuById(menuList, input);
+            Menu selectedMenu = findMenuByDisplayIndex(menuList, input);
             if (selectedMenu == null) {
                 System.out.println("잘못된 입력입니다.\n");
                 continue;
@@ -103,17 +103,12 @@ public class MenuView {
         return null;
     }
 
-    private static Menu findMenuById(List<Menu> menuList, String idText) {
-        Integer menuId = parseIntOrNull(idText);
-        if (menuId == null) {
+    private static Menu findMenuByDisplayIndex(List<Menu> menuList, String idText) {
+        Integer index = parseIntOrNull(idText);
+        if (index == null || index < 1 || index > menuList.size()) {
             return null;
         }
-        for (Menu menu : menuList) {
-            if (menu.getMenuId() == menuId) {
-                return menu;
-            }
-        }
-        return null;
+        return menuList.get(index - 1);
     }
 
     private static Integer parseIntOrNull(String text) {
@@ -143,9 +138,10 @@ public class MenuView {
         if (menuList.isEmpty()) {
             System.out.println("  등록된 메뉴가 없습니다.");
         } else {
-            for (Menu menu : menuList) {
+            for (int i = 0; i < menuList.size(); i++) {
+                Menu menu = menuList.get(i);
                 String status = menu.isSoldout() ? " [품절]" : "";
-                System.out.println("  " + menu.getMenuId() + ". " + menu.getMenuName()
+                System.out.println("  " + (i + 1) + ". " + menu.getMenuName()
                         + " - " + menu.getPrice() + "원" + status);
             }
         }

@@ -1,11 +1,13 @@
 package kosta.kiosk.view;
 
 import kosta.kiosk.controller.OrderController;
+import kosta.kiosk.controller.UserController;
 import kosta.kiosk.model.dto.HotIce;
 import kosta.kiosk.model.dto.IceLevel;
 import kosta.kiosk.model.dto.Menu;
 import kosta.kiosk.model.dto.OrderDetail;
 import kosta.kiosk.model.dto.Size;
+import kosta.kiosk.session.Session;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.Scanner;
  */
 public class OrderView {
 
-    private static final Scanner sc = new Scanner(System.in);
+private static final Scanner sc = new Scanner(System.in);
 
     /**
      * MenuView에서 메뉴를 하나 골랐을 때 호출된다.
