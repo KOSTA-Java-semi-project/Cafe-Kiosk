@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class UserController {
 
-    private static UserService userService = new UserService();
+    private static final UserService userService = new UserService();
 
     // 회원 조회(전화번호). 가입 안 된 번호면 null, DB 오류가 나도 null.
     public static UserDTO login(String phone) {
