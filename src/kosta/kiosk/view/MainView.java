@@ -18,10 +18,10 @@ public class MainView {
 			int menu = Integer.parseInt(sc.nextLine());
 			switch(menu) {
 			case 1 :
-				//MenuView.register(); // 가입
+				MainView.login();// 로그인
 				break;
 			case 2 :
-				MainView.login();// 로그인
+				//MenuView.register(); // 가입
 				break;
 			case 3 :
 				
@@ -36,7 +36,7 @@ public class MainView {
 	
 	public static void printMenu() {
 		System.out.println("=== KOSTA CAFE ===");
-		System.out.println("1. 로그인   |   2. 비회원 주문   |   3. 관리자   |  9. 종료");
+		System.out.println("1. 회원 주문(가입)   |   2. 비회원 주문   |   3. 관리자   |  9. 종료");
 	}
 	
 	
@@ -47,10 +47,7 @@ public class MainView {
 		 System.out.print("전화번호 : ");
 		 String phone = sc.nextLine();
 		 
-		 System.out.print("이름 : ");
-		 String name = sc.nextLine();
-		 
-		 UserController.login(phone, name); 
+		 UserController.login(phone); 
 	}
 	
 	/**
