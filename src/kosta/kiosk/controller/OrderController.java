@@ -48,7 +48,7 @@ public class OrderController {
                 return;
             }
         }
-        OrderDetail detail = new OrderDetail(0, menu.getMenuId(), amount, size, shot, ice, syrup);
+        OrderDetail detail = new OrderDetail(menu.getMenuId(), amount, size, shot, ice, syrup);
         carts.add(detail);
     }
 

@@ -25,6 +25,16 @@ public class OrderDetail {
         this.syrup = syrup;
     }
 
+    /** 장바구니 담기용: orderId/detailId 둘 다 아직 정해지지 않았으므로 제외 */
+    public OrderDetail(int menuId, int amount, Size size, int shot, IceLevel ice, int syrup) {
+        this.menuId = menuId;
+        this.amount = amount;
+        this.size = size;
+        this.shot = shot;
+        this.ice = ice;
+        this.syrup = syrup;
+    }
+
     /** 조회용: DB에서 읽은 전체 필드 */
     public OrderDetail(int detailId, int orderId, int menuId, int amount, Size size, int shot, IceLevel ice, int syrup) {
         this.detailId = detailId;
