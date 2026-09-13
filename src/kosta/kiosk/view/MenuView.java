@@ -4,9 +4,7 @@ import kosta.kiosk.controller.OrderController;
 import kosta.kiosk.model.dto.Category;
 import kosta.kiosk.model.dto.Menu;
 import kosta.kiosk.model.dto.OrderDetail;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Scanner;
@@ -104,9 +102,8 @@ public class MenuView {
         System.out.println("=========================================");
         System.out.println("               장바구니 목록");
         System.out.println("=========================================");
-        List<OrderDetail> mergedCart = mergeSameOptions(cart);
         int i = 1;
-        for (OrderDetail detail : mergedCart) {
+        for (OrderDetail detail : cart) {
             Menu menu = menuMap.get(detail.getMenuId());
             System.out.println(i + ". " + formatCartLine(detail, menu));
             i++;
@@ -116,24 +113,6 @@ public class MenuView {
         System.out.println("-----------------------------------------");
         System.out.println("합계: " + sum + "원");
         System.out.println("=========================================\n");
-    }
-
-    // 같은 메뉴 + 같은 옵션(사이즈/얼음/샷/시럽)이면 수량을 합쳐서 한 줄로 보여준다 (실제 장바구니 데이터는 바꾸지 않음)
-    private static List<OrderDetail> mergeSameOptions(List<OrderDetail> cart) {
-        Map<String, OrderDetail> merged = new LinkedHashMap<>();
-        for (OrderDetail detail : cart) {
-            String key = detail.getMenuId() + "_" + detail.getSize() + "_" + detail.getIce()
-                    + "_" + detail.getShot() + "_" + detail.getSyrup();
-            OrderDetail existing = merged.get(key);
-            if (existing == null) {
-                OrderDetail copy = new OrderDetail(detail.getOrderId(), detail.getMenuId(), detail.getAmount(),
-                        detail.getSize(), detail.getShot(), detail.getIce(), detail.getSyrup());
-                merged.put(key, copy);
-            } else {
-                existing.setAmount(existing.getAmount() + detail.getAmount());
-            }
-        }
-        return new ArrayList<>(merged.values());
     }
 
     // 장바구니 한 줄 표시 문자열 조합 (OrderDetail은 menuId만 알기 때문에 Menu는 View가 조회해서 넘겨준다)

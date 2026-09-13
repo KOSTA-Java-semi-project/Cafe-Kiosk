@@ -38,6 +38,16 @@ public class OrderController {
 
     public static void addToCart(Menu menu, Size size, int shot, IceLevel ice, int syrup, int amount) {
         List<OrderDetail> carts = Session.getInstance().getCarts();
+        for (OrderDetail detail : carts) {
+            if (detail.getMenuId() == menu.getMenuId()
+                    && detail.getSize() == size
+                    && detail.getIce() == ice
+                    && detail.getShot() == shot
+                    && detail.getSyrup() == syrup) {
+                detail.setAmount(detail.getAmount() + amount);
+                return;
+            }
+        }
         OrderDetail detail = new OrderDetail(0, menu.getMenuId(), amount, size, shot, ice, syrup);
         carts.add(detail);
     }
