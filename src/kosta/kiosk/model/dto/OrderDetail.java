@@ -4,26 +4,12 @@ public class OrderDetail {
 
     private int detailId;
     private int orderId;
-    private int menuId;
+    private final int menuId;
     private int amount;
-    private Size size;
-    private int shot;
-    private IceLevel ice;
-    private int syrup;
-
-    public OrderDetail() {
-    }
-
-    /** 등록용: detailId는 DB가 생성하므로 제외 */
-    public OrderDetail(int orderId, int menuId, int amount, Size size, int shot, IceLevel ice, int syrup) {
-        this.orderId = orderId;
-        this.menuId = menuId;
-        this.amount = amount;
-        this.size = size;
-        this.shot = shot;
-        this.ice = ice;
-        this.syrup = syrup;
-    }
+    private final Size size;
+    private final int shot;
+    private final IceLevel ice;
+    private final int syrup;
 
     /** 장바구니 담기용: orderId/detailId 둘 다 아직 정해지지 않았으므로 제외 */
     public OrderDetail(int menuId, int amount, Size size, int shot, IceLevel ice, int syrup) {
@@ -47,28 +33,8 @@ public class OrderDetail {
         this.syrup = syrup;
     }
 
-    public int getDetailId() {
-        return detailId;
-    }
-
-    public void setDetailId(int detailId) {
-        this.detailId = detailId;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
     public int getMenuId() {
         return menuId;
-    }
-
-    public void setMenuId(int menuId) {
-        this.menuId = menuId;
     }
 
     public int getAmount() {
@@ -83,32 +49,16 @@ public class OrderDetail {
         return size;
     }
 
-    public void setSize(Size size) {
-        this.size = size;
-    }
-
     public int getShot() {
         return shot;
-    }
-
-    public void setShot(int shot) {
-        this.shot = shot;
     }
 
     public IceLevel getIce() {
         return ice;
     }
 
-    public void setIce(IceLevel ice) {
-        this.ice = ice;
-    }
-
     public int getSyrup() {
         return syrup;
-    }
-
-    public void setSyrup(int syrup) {
-        this.syrup = syrup;
     }
 
     @Override
