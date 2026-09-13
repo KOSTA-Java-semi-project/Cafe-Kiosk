@@ -40,7 +40,11 @@ public class OrderService {
         return orderDAO.insertOrder(order);
     }
 
-    private int calculateSum(List<OrderDetail> orderDetailList) throws SQLException {
+    /**
+     * 주문상세 목록의 합계 금액을 계산한다.
+     * insertOrder 내부뿐 아니라, 주문 확정 전 결제 화면에 넘길 금액을 미리 계산할 때도 재사용한다.
+     */
+    public int calculateSum(List<OrderDetail> orderDetailList) throws SQLException {
         Map<Integer, Integer> priceMap = new HashMap<>();
         for (Menu menu : menuDAO.selectAllMenu()) {
             priceMap.put(menu.getMenuId(), menu.getPrice());
@@ -56,5 +60,9 @@ public class OrderService {
 
     public Order selectOrderByOrderId(int orderId) throws SQLException {
         return orderDAO.selectOrderByOrderId(orderId);
+    }
+
+    public List<Menu> getAllMenuList() throws SQLException {
+        return menuDAO.selectAllMenu();
     }
 }
