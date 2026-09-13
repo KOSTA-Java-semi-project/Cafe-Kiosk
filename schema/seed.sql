@@ -35,3 +35,6 @@ INSERT INTO menu (category_id, menu_name, description, price, hot_ice) VALUES
 -- 스무디 (category_id = 4)
 (4, '딸기스무디', '달콤한 딸기로 만든 스무디', 5000, 'ICE'),
 (4, '망고스무디', '진한 망고로 만든 스무디', 5000, 'ICE');
+
+-- 관리자 샘플 데이터
+INSERT INTO manager(name,id,password) VALUES ('신짱구','manager','manager1234');
