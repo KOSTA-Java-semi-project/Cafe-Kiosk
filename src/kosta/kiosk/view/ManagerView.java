@@ -5,14 +5,49 @@ import java.util.Scanner;
 
 import kosta.kiosk.controller.ManagerController;
 import kosta.kiosk.model.dto.HotIce;
+import kosta.kiosk.model.dto.ManagerDTO;
 import kosta.kiosk.model.dto.Menu;
 
 public class ManagerView {
 
     private static Scanner sc = new Scanner(System.in);
 
-    // ManagerController는 static 메서드가 아니므로 객체 생성
-    private static ManagerController managerController = new ManagerController();
+    private static ManagerController managerController =
+            new ManagerController();
+
+
+    /**
+     * 관리자 로그인
+     */
+    public static void login() {
+
+        System.out.println();
+        System.out.println("=========================================");
+        System.out.println("              관리자 로그인");
+        System.out.println("=========================================");
+
+        System.out.print("관리자 ID : ");
+        String id = sc.nextLine();
+
+        System.out.print("비밀번호 : ");
+        String password = sc.nextLine();
+
+        ManagerDTO manager = managerController.login(id, password);
+
+        if (manager != null) {
+
+            System.out.println();
+            System.out.println("관리자 로그인 성공");
+            System.out.println();
+
+            managerMenu();
+
+        } else {
+
+            System.out.println();
+            System.out.println("아이디 또는 비밀번호가 올바르지 않습니다.");
+        }
+    }
 
 
     /**
@@ -56,7 +91,8 @@ public class ManagerView {
                     break;
 
                 case 0:
-                    // MainView로 돌아가기
+                    // 메인 화면으로 돌아가기
+                    System.out.println("관리자 메뉴에서 나갑니다.");
                     return;
 
                 default:
@@ -179,7 +215,6 @@ public class ManagerView {
 
             HotIce hotIce = selectHotIce();
 
-            // menu_id는 DB에서 AUTO_INCREMENT
             Menu menu = new Menu();
 
             menu.setCategoryId(categoryId);
