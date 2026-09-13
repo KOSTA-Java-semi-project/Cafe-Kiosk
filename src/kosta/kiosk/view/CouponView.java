@@ -36,26 +36,26 @@ public class CouponView {
 
             printCoupons(coupons);
             System.out.println("현재 결제 예정 금액: " + orderAmount + "원");
-            System.out.print("사용할 쿠폰번호를 입력하세요 (그만 사용: 0): ");
+            System.out.print("사용할 쿠폰 번호를 입력하세요 (그만 사용: 0): ");
 
-            int couponId = 0;
+            int choice = 0;
             try {
-                couponId = Integer.parseInt(sc.nextLine());
+                choice = Integer.parseInt(sc.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("숫자만 입력해주세요.");
                 continue;
             }
 
-            if (couponId == 0) {
+            if (choice == 0) {
                 break;
             }
 
-            CouponDTO selected = findCouponById(coupons, couponId);
-
-            if (selected == null) {
-                System.out.println("존재하지 않는 쿠폰번호입니다. 다시 입력해주세요.");
+            if (choice < 1 || choice > coupons.size()) {
+                System.out.println("존재하지 않는 쿠폰 번호입니다. 다시 입력해주세요.");
                 continue;
             }
+
+            CouponDTO selected = coupons.get(choice - 1);
 
             int beforeAmount = orderAmount;
             int actualDiscount = Math.min(selected.getPrice(), orderAmount);
@@ -73,17 +73,8 @@ public class CouponView {
 
     private void printCoupons(List<CouponDTO> coupons) {
         System.out.println("\n보유 쿠폰 목록");
-        for (CouponDTO c : coupons) {
-            System.out.println("- 쿠폰번호: " + c.getCouponId() + " / 할인금액: " + c.getPrice() + "원");
+        for (int i = 0; i < coupons.size(); i++) {
+            System.out.println("- " + (i + 1) + "번 / 할인금액: " + coupons.get(i).getPrice() + "원");
         }
-    }
-
-    private CouponDTO findCouponById(List<CouponDTO> coupons, int couponId) {
-        for (CouponDTO c : coupons) {
-            if (c.getCouponId() == couponId) {
-                return c;
-            }
-        }
-        return null;
     }
 }
