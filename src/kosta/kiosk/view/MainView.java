@@ -18,7 +18,7 @@ public class MainView {
 			int menu = Integer.parseInt(sc.nextLine());
 			switch(menu) {
 			case 1 :
-				new UserView().start();
+				UserView.start();
 				if (Session.getInstance().getUser() != null) {
 					OrderView.orderMenu();
 				}
