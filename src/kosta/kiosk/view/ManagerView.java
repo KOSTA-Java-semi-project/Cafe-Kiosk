@@ -1,230 +1,334 @@
 package kosta.kiosk.view;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import kosta.kiosk.model.dto.Category;
+import kosta.kiosk.controller.ManagerController;
 import kosta.kiosk.model.dto.HotIce;
 import kosta.kiosk.model.dto.ManagerDTO;
 import kosta.kiosk.model.dto.Menu;
 
 public class ManagerView {
 
-    private static Scanner sc = new Scanner(System.in);
+    private static final Scanner sc = new Scanner(System.in);
+
+    private static final ManagerController managerController =
+            new ManagerController();
 
 
-    /*
-     * 관리자 로그인 정보 입력
-     */
-    public static ManagerDTO login() {
+    // =========================================================
+    // 관리자 로그인
+    // =========================================================
+
+    public static void login() {
 
         System.out.println();
-        System.out.println("========================================");
+        System.out.println("=========================================");
         System.out.println("              관리자 로그인");
-        System.out.println("========================================");
+        System.out.println("=========================================");
 
-        System.out.print("ID > ");
+        System.out.print("아이디 > ");
         String id = sc.nextLine();
 
-        System.out.print("Password > ");
+        System.out.print("비밀번호 > ");
         String password = sc.nextLine();
 
-        return new ManagerDTO(id, password);
-    }
+        ManagerDTO manager =
+                managerController.login(id, password);
 
+        if (manager == null) {
 
-    /*
-     * 관리자 로그인 성공
-     */
-    public static void loginSuccess(ManagerDTO manager) {
+            System.out.println();
+            System.out.println("관리자 로그인에 실패했습니다.");
+            System.out.println("아이디 또는 비밀번호를 확인해주세요.");
 
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println("            관리자 로그인 성공");
-        System.out.println("========================================");
-        System.out.println(manager.getName() + " 관리자님 환영합니다.");
-        System.out.println("========================================");
-    }
-
-
-    /*
-     * 관리자 로그인 실패
-     */
-    public static void loginFail() {
+            return;
+        }
 
         System.out.println();
-        System.out.println("========================================");
-        System.out.println("ID 또는 비밀번호가 올바르지 않습니다.");
-        System.out.println("========================================");
+        System.out.println(
+                manager.getName()
+                + " 관리자님, 로그인되었습니다."
+        );
+
+        managerMenu(manager);
     }
 
 
-    /*
-     * 관리자 메인 메뉴
-     *
-     * MainView에서
-     * ManagerView.managerMenu();
-     * 로 호출한다.
-     */
-    public static void managerMenu() {
+    // =========================================================
+    // 관리자 메인 메뉴
+    // =========================================================
+
+    public static void managerMenu(ManagerDTO manager) {
 
         while (true) {
 
-            int menu = printManagerMenu();
+            printManagerMenu();
+
+            int menu = readInt("선택 > ");
 
             switch (menu) {
 
                 case 1:
-                    System.out.println();
-                    System.out.println("전체 메뉴 조회");
+                    menuInsert();
                     break;
 
                 case 2:
-                    System.out.println();
-                    System.out.println("메뉴 상세 조회");
+                    menuUpdate();
                     break;
 
                 case 3:
-                    System.out.println();
-                    System.out.println("메뉴 등록");
+                    menuDelete();
                     break;
 
                 case 4:
-                    System.out.println();
-                    System.out.println("메뉴 수정");
+                    menuSelectAll();
                     break;
 
                 case 5:
-                    System.out.println();
-                    System.out.println("메뉴 삭제");
+                    categorySelectAll();
                     break;
 
                 case 6:
-                    System.out.println();
-                    System.out.println("메뉴 품절 상태 변경");
+                    salesSelect();
                     break;
 
                 case 0:
+
                     System.out.println();
-                    System.out.println("관리자 메뉴를 종료합니다.");
+                    System.out.println(
+                            manager.getName()
+                            + " 관리자님이 로그아웃되었습니다."
+                    );
+
                     return;
 
                 default:
-                    System.out.println();
-                    System.out.println("잘못된 메뉴 번호입니다.");
+                    System.out.println(
+                            "올바른 메뉴 번호를 선택해주세요."
+                    );
             }
         }
     }
 
 
-    /*
-     * 관리자 메뉴 출력
-     */
-    public static int printManagerMenu() {
-
-        while (true) {
-
-            try {
-
-                System.out.println();
-                System.out.println("========================================");
-                System.out.println("              관리자 메뉴");
-                System.out.println("========================================");
-                System.out.println("1. 전체 메뉴 조회");
-                System.out.println("2. 메뉴 상세 조회");
-                System.out.println("3. 메뉴 등록");
-                System.out.println("4. 메뉴 수정");
-                System.out.println("5. 메뉴 삭제");
-                System.out.println("6. 메뉴 품절 상태 변경");
-                System.out.println("0. 이전으로");
-                System.out.println("========================================");
-
-                System.out.print("선택 > ");
-
-                return Integer.parseInt(
-                        sc.nextLine()
-                );
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "메뉴 번호를 숫자로 입력해주세요."
-                );
-            }
-        }
-    }
-
-
-    /*
-     * 카테고리 목록 출력
-     *
-     * categoryList는 DAO에서 DB를 조회한 결과를
-     * Controller / Service를 통해 전달받는다.
-     */
-    public static void printCategoryList(
-            List<Category> categoryList) {
+    private static void printManagerMenu() {
 
         System.out.println();
-        System.out.println("========================================");
-        System.out.println("              카테고리 선택");
-        System.out.println("========================================");
+        System.out.println("=========================================");
+        System.out.println("               관리자 메뉴");
+        System.out.println("=========================================");
+        System.out.println("1. 메뉴 등록");
+        System.out.println("2. 메뉴 수정");
+        System.out.println("3. 메뉴 삭제");
+        System.out.println("4. 메뉴 전체 조회");
+        System.out.println("5. 카테고리 조회");
+        System.out.println("6. 매출 조회");
+        System.out.println("0. 로그아웃");
+        System.out.println("=========================================");
+    }
 
-        if (categoryList == null
-                || categoryList.isEmpty()) {
 
+    // =========================================================
+    // 1. 메뉴 등록
+    // =========================================================
+
+    private static void menuInsert() {
+
+        System.out.println();
+        System.out.println("=========================================");
+        System.out.println("               메뉴 등록");
+        System.out.println("=========================================");
+
+        printCategories();
+
+        int categoryId = readCategoryId();
+
+        System.out.print("메뉴 이름 > ");
+        String menuName = sc.nextLine().trim();
+
+        System.out.print("메뉴 설명 > ");
+        String description = sc.nextLine().trim();
+
+        int price = readPositiveInt("가격 > ");
+
+        HotIce hotIce = readHotIce();
+
+        Menu menu = new Menu();
+
+        menu.setCategoryId(categoryId);
+        menu.setMenuName(menuName);
+        menu.setDescription(description);
+        menu.setPrice(price);
+        menu.setHotIce(hotIce);
+
+        // 신규 메뉴는 기본적으로 판매 가능
+        menu.setSoldout(false);
+
+        boolean result =
+                managerController.insertMenu(menu);
+
+        if (result) {
+
+            System.out.println();
+            System.out.println("메뉴가 등록되었습니다.");
+
+            // 등록 후 현재 메뉴판 확인
+            menuSelectAll();
+
+        } else {
+
+            System.out.println();
+            System.out.println("메뉴 등록에 실패했습니다.");
+        }
+    }
+
+
+    // =========================================================
+    // 2. 메뉴 수정
+    // =========================================================
+
+    private static void menuUpdate() {
+
+        System.out.println();
+        System.out.println("=========================================");
+        System.out.println("               메뉴 수정");
+        System.out.println("=========================================");
+
+        // 먼저 현재 메뉴 출력
+        menuSelectAll();
+
+        int menuId =
+                readPositiveInt("수정할 메뉴 번호(menu_id) > ");
+
+        System.out.println();
+        System.out.println("새로운 메뉴 정보를 입력해주세요.");
+
+        printCategories();
+
+        int categoryId = readCategoryId();
+
+        System.out.print("메뉴 이름 > ");
+        String menuName = sc.nextLine().trim();
+
+        System.out.print("메뉴 설명 > ");
+        String description = sc.nextLine().trim();
+
+        int price = readPositiveInt("가격 > ");
+
+        HotIce hotIce = readHotIce();
+
+        boolean soldout = readSoldout();
+
+        Menu menu = new Menu();
+
+        menu.setMenuId(menuId);
+        menu.setCategoryId(categoryId);
+        menu.setMenuName(menuName);
+        menu.setDescription(description);
+        menu.setPrice(price);
+        menu.setHotIce(hotIce);
+        menu.setSoldout(soldout);
+
+        boolean result =
+                managerController.updateMenu(menu);
+
+        if (result) {
+
+            System.out.println();
+            System.out.println("메뉴가 수정되었습니다.");
+
+            // 수정 결과 바로 확인
+            menuSelectAll();
+
+        } else {
+
+            System.out.println();
             System.out.println(
-                    "등록된 카테고리가 없습니다."
+                    "메뉴 수정에 실패했습니다."
             );
+        }
+    }
+
+
+    // =========================================================
+    // 3. 메뉴 삭제
+    // =========================================================
+
+    private static void menuDelete() {
+
+        System.out.println();
+        System.out.println("=========================================");
+        System.out.println("               메뉴 삭제");
+        System.out.println("=========================================");
+
+        // 삭제하기 전에 전체 메뉴 확인
+        menuSelectAll();
+
+        int menuId =
+                readPositiveInt("삭제할 메뉴 번호(menu_id) > ");
+
+        System.out.print(
+                "정말 삭제하시겠습니까? (Y/N) > "
+        );
+
+        String answer =
+                sc.nextLine().trim();
+
+        if (!answer.equalsIgnoreCase("Y")) {
 
             System.out.println(
-                    "========================================"
+                    "메뉴 삭제가 취소되었습니다."
             );
 
             return;
         }
 
-        for (Category category : categoryList) {
+        boolean result =
+                managerController.deleteMenu(menuId);
 
+        if (result) {
+
+            System.out.println();
+            System.out.println("메뉴가 삭제되었습니다.");
+
+            // 삭제 후 결과 확인
+            menuSelectAll();
+
+        } else {
+
+            System.out.println();
             System.out.println(
-                    category.getCategoryId()
-                    + ". "
-                    + category.getCategoryName()
+                    "메뉴 삭제에 실패했습니다."
             );
         }
-
-        System.out.println(
-                "========================================"
-        );
     }
 
 
-    /*
-     * 전체 메뉴 출력
-     */
-    public static void printMenuList(
-            List<Menu> menuList) {
+    // =========================================================
+    // 4. 전체 메뉴 조회
+    // =========================================================
+
+    private static void menuSelectAll() {
+
+        List<Menu> menuList =
+                managerController.selectAllMenu();
 
         System.out.println();
         System.out.println(
-                "=========================================================================="
+                "============================================================"
         );
         System.out.println(
-                "                              전체 메뉴"
+                "                         전체 메뉴"
         );
         System.out.println(
-                "=========================================================================="
+                "============================================================"
         );
 
-        if (menuList == null
-                || menuList.isEmpty()) {
+        if (menuList.isEmpty()) {
 
             System.out.println(
                     "등록된 메뉴가 없습니다."
-            );
-
-            System.out.println(
-                    "=========================================================================="
             );
 
             return;
@@ -233,550 +337,149 @@ public class ManagerView {
         for (Menu menu : menuList) {
 
             System.out.println(
-                    "메뉴 번호 : "
+                    "메뉴번호 : "
                     + menu.getMenuId()
             );
 
             System.out.println(
-                    "카테고리 번호 : "
-                    + menu.getCategoryId()
+                    "카테고리 : "
+                    + getCategoryName(
+                            menu.getCategoryId()
+                    )
             );
 
             System.out.println(
-                    "메뉴 이름 : "
+                    "메뉴이름 : "
                     + menu.getMenuName()
             );
 
             System.out.println(
-                    "설명 : "
+                    "설명     : "
                     + menu.getDescription()
             );
 
             System.out.println(
-                    "가격 : "
+                    "가격     : "
                     + menu.getPrice()
+                    + "원"
             );
 
             System.out.println(
-                    "HOT/ICE : "
+                    "HOT/ICE  : "
                     + menu.getHotIce()
             );
 
             System.out.println(
-                    "품절 상태 : "
-                    + (menu.isSoldout()
+                    "판매상태 : "
+                    + (
+                        menu.isSoldout()
                         ? "품절"
-                        : "판매중")
-            );
-
-            System.out.println(
-                    "--------------------------------------------------------------------------"
-            );
-        }
-    }
-
-
-    /*
-     * 메뉴 상세 조회 결과 출력
-     */
-    public static void printMenu(
-            Menu menu) {
-
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println("              메뉴 상세 정보");
-        System.out.println("========================================");
-
-        if (menu == null) {
-
-            System.out.println(
-                    "해당 메뉴가 존재하지 않습니다."
-            );
-
-            System.out.println(
-                    "========================================"
-            );
-
-            return;
-        }
-
-        System.out.println(
-                "메뉴 번호 : "
-                + menu.getMenuId()
-        );
-
-        System.out.println(
-                "카테고리 번호 : "
-                + menu.getCategoryId()
-        );
-
-        System.out.println(
-                "메뉴 이름 : "
-                + menu.getMenuName()
-        );
-
-        System.out.println(
-                "설명 : "
-                + menu.getDescription()
-        );
-
-        System.out.println(
-                "가격 : "
-                + menu.getPrice()
-        );
-
-        System.out.println(
-                "HOT/ICE : "
-                + menu.getHotIce()
-        );
-
-        System.out.println(
-                "품절 상태 : "
-                + (menu.isSoldout()
-                    ? "품절"
-                    : "판매중")
-        );
-
-        System.out.println(
-                "등록일 : "
-                + menu.getCreatedAt()
-        );
-
-        System.out.println(
-                "========================================"
-        );
-    }
-
-
-    /*
-     * 메뉴 ID 입력
-     */
-    public static int inputMenuId() {
-
-        while (true) {
-
-            try {
-
-                System.out.print(
-                        "메뉴 번호 > "
-                );
-
-                return Integer.parseInt(
-                        sc.nextLine()
-                );
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "메뉴 번호는 숫자로 입력해주세요."
-                );
-            }
-        }
-    }
-
-
-    /*
-     * 메뉴 등록 정보 입력
-     */
-    public static Menu inputMenu(
-            List<Category> categoryList) {
-
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println("                메뉴 등록");
-        System.out.println("========================================");
-
-        /*
-         * DB에서 가져온 실제 카테고리 목록 출력
-         */
-        printCategoryList(categoryList);
-
-        int categoryId =
-                inputValidCategoryId(
-                        categoryList
-                );
-
-        System.out.print(
-                "메뉴 이름 > "
-        );
-
-        String menuName =
-                sc.nextLine();
-
-        System.out.print(
-                "메뉴 설명 > "
-        );
-
-        String description =
-                sc.nextLine();
-
-        int price =
-                inputPrice();
-
-        HotIce hotIce =
-                inputHotIce();
-
-        Menu menu =
-                new Menu();
-
-        menu.setCategoryId(
-                categoryId
-        );
-
-        menu.setMenuName(
-                menuName
-        );
-
-        menu.setDescription(
-                description
-        );
-
-        menu.setPrice(
-                price
-        );
-
-        menu.setHotIce(
-                hotIce
-        );
-
-        /*
-         * 신규 메뉴 기본값
-         */
-        menu.setSoldout(false);
-
-        return menu;
-    }
-
-
-    /*
-     * 메뉴 수정 정보 입력
-     */
-    public static Menu inputMenuUpdate(
-            Menu oldMenu,
-            List<Category> categoryList) {
-
-        System.out.println();
-        System.out.println("========================================");
-        System.out.println("                메뉴 수정");
-        System.out.println("========================================");
-
-        System.out.println(
-                "현재 메뉴 : "
-                + oldMenu.getMenuName()
-        );
-
-        printCategoryList(
-                categoryList
-        );
-
-        int categoryId =
-                inputValidCategoryId(
-                        categoryList
-                );
-
-        System.out.print(
-                "메뉴 이름 ["
-                + oldMenu.getMenuName()
-                + "] > "
-        );
-
-        String menuName =
-                sc.nextLine();
-
-        if (menuName.isBlank()) {
-
-            menuName =
-                    oldMenu.getMenuName();
-        }
-
-
-        System.out.print(
-                "메뉴 설명 ["
-                + oldMenu.getDescription()
-                + "] > "
-        );
-
-        String description =
-                sc.nextLine();
-
-        if (description.isBlank()) {
-
-            description =
-                    oldMenu.getDescription();
-        }
-
-
-        int price;
-
-        while (true) {
-
-            System.out.print(
-                    "가격 ["
-                    + oldMenu.getPrice()
-                    + "] > "
-            );
-
-            String input =
-                    sc.nextLine();
-
-            if (input.isBlank()) {
-
-                price =
-                        oldMenu.getPrice();
-
-                break;
-            }
-
-            try {
-
-                price =
-                        Integer.parseInt(input);
-
-                if (price < 0) {
-
-                    System.out.println(
-                            "가격은 0 이상이어야 합니다."
-                    );
-
-                    continue;
-                }
-
-                break;
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "가격은 숫자로 입력해주세요."
-                );
-            }
-        }
-
-
-        HotIce hotIce =
-                inputHotIce();
-
-
-        Menu menu =
-                new Menu();
-
-        menu.setMenuId(
-                oldMenu.getMenuId()
-        );
-
-        menu.setCategoryId(
-                categoryId
-        );
-
-        menu.setMenuName(
-                menuName
-        );
-
-        menu.setDescription(
-                description
-        );
-
-        menu.setPrice(
-                price
-        );
-
-        menu.setHotIce(
-                hotIce
-        );
-
-        menu.setSoldout(
-                oldMenu.isSoldout()
-        );
-
-        return menu;
-    }
-
-
-    /*
-     * 카테고리 ID 검증
-     *
-     * DB에서 조회한 category_id만 입력 가능
-     */
-    private static int inputValidCategoryId(
-            List<Category> categoryList) {
-
-        while (true) {
-
-            try {
-
-                System.out.print(
-                        "카테고리 번호 > "
-                );
-
-                int categoryId =
-                        Integer.parseInt(
-                                sc.nextLine()
-                        );
-
-                for (Category category
-                        : categoryList) {
-
-                    if (
-                        category.getCategoryId()
-                        == categoryId
-                    ) {
-
-                        return categoryId;
-                    }
-                }
-
-                System.out.println(
-                        "존재하지 않는 카테고리입니다."
-                );
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "카테고리 번호를 숫자로 입력해주세요."
-                );
-            }
-        }
-    }
-
-
-    /*
-     * 가격 입력
-     */
-    private static int inputPrice() {
-
-        while (true) {
-
-            try {
-
-                System.out.print(
-                        "가격 > "
-                );
-
-                int price =
-                        Integer.parseInt(
-                                sc.nextLine()
-                        );
-
-                if (price < 0) {
-
-                    System.out.println(
-                            "가격은 0 이상이어야 합니다."
-                    );
-
-                    continue;
-                }
-
-                return price;
-
-            } catch (NumberFormatException e) {
-
-                System.out.println(
-                        "가격은 숫자로 입력해주세요."
-                );
-            }
-        }
-    }
-
-
-    /*
-     * HOT / ICE 입력
-     */
-    private static HotIce inputHotIce() {
-
-        while (true) {
-
-            System.out.println(
-                    "가능한 옵션 : "
-                    + Arrays.toString(
-                            HotIce.values()
+                        : "판매중"
                     )
             );
 
-            System.out.print(
-                    "HOT / ICE 선택 > "
+            System.out.println(
+                    "등록일   : "
+                    + menu.getCreatedAt()
             );
 
-            String input =
-                    sc.nextLine()
-                      .trim()
-                      .toUpperCase();
-
-            try {
-
-                return HotIce.valueOf(
-                        input
-                );
-
-            } catch (IllegalArgumentException e) {
-
-                System.out.println(
-                        "올바른 HOT/ICE 값을 입력해주세요."
-                );
-            }
+            System.out.println(
+                    "------------------------------------------------------------"
+            );
         }
     }
 
 
-    /*
-     * 삭제 확인
-     */
-    public static boolean confirmDelete(
-            Menu menu) {
+    // =========================================================
+    // 5. 카테고리 조회
+    // =========================================================
+
+    private static void categorySelectAll() {
 
         System.out.println();
+        System.out.println("=========================================");
+        System.out.println("              카테고리 목록");
+        System.out.println("=========================================");
+
+        printCategories();
+
+        System.out.println("=========================================");
+    }
+
+
+    // =========================================================
+    // 6. 매출 조회
+    // =========================================================
+
+    private static void salesSelect() {
+
+        System.out.println();
+        System.out.println("=========================================");
+        System.out.println("               매출 조회");
+        System.out.println("=========================================");
 
         System.out.println(
-                "삭제할 메뉴 : "
-                + menu.getMenuName()
-        );
-
-        System.out.print(
-                "정말 삭제하시겠습니까? (Y/N) > "
-        );
-
-        String answer =
-                sc.nextLine()
-                  .trim();
-
-        return answer.equalsIgnoreCase(
-                "Y"
+                "매출 조회 기능은 Order 기능과 연결 후 구현합니다."
         );
     }
 
 
-    /*
-     * 품절 상태 입력
-     */
-    public static boolean inputSoldout() {
+    // =========================================================
+    // 카테고리 출력
+    // =========================================================
+
+    private static void printCategories() {
+
+        System.out.println();
+        System.out.println("1. 커피");
+        System.out.println("2. 티");
+        System.out.println("3. 에이드");
+        System.out.println("4. 스무디");
+        System.out.println();
+    }
+
+
+    private static int readCategoryId() {
+
+        while (true) {
+
+            int categoryId =
+                    readInt("카테고리 번호 > ");
+
+            if (categoryId >= 1
+                    && categoryId <= 4) {
+
+                return categoryId;
+            }
+
+            System.out.println(
+                    "1 ~ 4 사이의 카테고리를 입력해주세요."
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HOT / ICE 입력
+    // =========================================================
+
+    private static HotIce readHotIce() {
 
         while (true) {
 
             System.out.println();
-            System.out.println(
-                    "1. 판매중"
-            );
-            System.out.println(
-                    "2. 품절"
-            );
+            System.out.println("1. HOT");
+            System.out.println("2. ICE");
 
-            System.out.print(
-                    "상태 선택 > "
-            );
+            int choice =
+                    readInt("HOT/ICE 선택 > ");
 
-            String input =
-                    sc.nextLine();
-
-            if (
-                "1".equals(input)
-            ) {
-
-                return false;
+            if (choice == 1) {
+                return HotIce.HOT;
             }
 
-            if (
-                "2".equals(input)
-            ) {
-
-                return true;
+            if (choice == 2) {
+                return HotIce.ICE;
             }
 
             System.out.println(
@@ -786,32 +489,105 @@ public class ManagerView {
     }
 
 
-    /*
-     * 성공 메시지
-     */
-    public static void printSuccess(
-            String message) {
+    // =========================================================
+    // 품절 상태
+    // =========================================================
 
-        System.out.println();
+    private static boolean readSoldout() {
 
-        System.out.println(
-                "[성공] "
-                + message
-        );
+        while (true) {
+
+            System.out.println();
+            System.out.println("0. 판매중");
+            System.out.println("1. 품절");
+
+            int soldout =
+                    readInt("판매 상태 > ");
+
+            if (soldout == 0) {
+                return false;
+            }
+
+            if (soldout == 1) {
+                return true;
+            }
+
+            System.out.println(
+                    "0 또는 1을 입력해주세요."
+            );
+        }
     }
 
 
-    /*
-     * 오류 메시지
-     */
-    public static void printError(
+    // =========================================================
+    // 숫자 입력
+    // =========================================================
+
+    private static int readInt(String message) {
+
+        while (true) {
+
+            System.out.print(message);
+
+            String input =
+                    sc.nextLine().trim();
+
+            try {
+
+                return Integer.parseInt(input);
+
+            } catch (NumberFormatException e) {
+
+                System.out.println(
+                        "숫자를 입력해주세요."
+                );
+            }
+        }
+    }
+
+
+    private static int readPositiveInt(
             String message) {
 
-        System.out.println();
+        while (true) {
 
-        System.out.println(
-                "[오류] "
-                + message
-        );
+            int number =
+                    readInt(message);
+
+            if (number > 0) {
+                return number;
+            }
+
+            System.out.println(
+                    "0보다 큰 숫자를 입력해주세요."
+            );
+        }
+    }
+
+
+    // =========================================================
+    // category_id → 카테고리 이름
+    // =========================================================
+
+    private static String getCategoryName(
+            int categoryId) {
+
+        switch (categoryId) {
+
+            case 1:
+                return "커피";
+
+            case 2:
+                return "티";
+
+            case 3:
+                return "에이드";
+
+            case 4:
+                return "스무디";
+
+            default:
+                return "알 수 없음";
+        }
     }
 }

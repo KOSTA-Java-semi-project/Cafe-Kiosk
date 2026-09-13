@@ -27,7 +27,7 @@ public class MainView {
 				MenuView.startOrder();
 				break;
 			case 3 :
-				ManagerView.managerMenu();
+				ManagerView.login();
 				break;
 
 			case 9 : 

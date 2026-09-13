@@ -1,6 +1,7 @@
 package kosta.kiosk.controller;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import kosta.kiosk.model.dto.ManagerDTO;
@@ -9,16 +10,14 @@ import kosta.kiosk.model.service.ManagerService;
 
 public class ManagerController {
 
-    private ManagerService managerService;
+    private final ManagerService managerService;
 
     public ManagerController() {
         managerService = new ManagerService();
     }
 
 
-    /**
-     * 관리자 로그인
-     */
+    // 관리자 로그인
     public ManagerDTO login(String id, String password) {
 
         try {
@@ -27,15 +26,15 @@ public class ManagerController {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
+            System.out.println("관리자 로그인 중 DB 오류가 발생했습니다.");
+            System.out.println(e.getMessage());
+
             return null;
         }
     }
 
 
-    /**
-     * 전체 메뉴 조회
-     */
+    // 전체 메뉴 조회
     public List<Menu> selectAllMenu() {
 
         try {
@@ -44,75 +43,67 @@ public class ManagerController {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-            return null;
+            System.out.println("메뉴 조회 중 DB 오류가 발생했습니다.");
+            System.out.println(e.getMessage());
+
+            return Collections.emptyList();
         }
     }
 
 
-    /**
-     * 카테고리별 메뉴 조회
-     */
-    public List<Menu> selectMenuListByCategoryId(int categoryId) {
+    // 메뉴 등록
+    public boolean insertMenu(Menu menu) {
 
         try {
 
-            return managerService.selectMenuListByCategoryId(categoryId);
+            int result = managerService.insertMenu(menu);
+
+            return result > 0;
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-            return null;
+            System.out.println("메뉴 등록 중 DB 오류가 발생했습니다.");
+            System.out.println(e.getMessage());
+
+            return false;
         }
     }
 
 
-    /**
-     * 메뉴 추가
-     */
-    public int insertMenu(Menu menu) {
+    // 메뉴 수정
+    public boolean updateMenu(Menu menu) {
 
         try {
 
-            return managerService.insertMenu(menu);
+            int result = managerService.updateMenu(menu);
+
+            return result > 0;
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-            return 0;
+            System.out.println("메뉴 수정 중 DB 오류가 발생했습니다.");
+            System.out.println(e.getMessage());
+
+            return false;
         }
     }
 
 
-    /**
-     * 메뉴 수정
-     */
-    public int updateMenuById(Menu menu) {
+    // 메뉴 삭제
+    public boolean deleteMenu(int menuId) {
 
         try {
 
-            return managerService.updateMenuById(menu);
+            managerService.deleteMenu(menuId);
+
+            return true;
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-            return 0;
-        }
-    }
+            System.out.println("메뉴 삭제 중 DB 오류가 발생했습니다.");
+            System.out.println(e.getMessage());
 
-
-    /**
-     * 메뉴 삭제
-     */
-    public void deleteMenuById(int menuId) {
-
-        try {
-
-            managerService.deleteMenuById(menuId);
-
-        } catch (SQLException e) {
-
-            e.printStackTrace();
+            return false;
         }
     }
 }
