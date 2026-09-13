@@ -18,7 +18,10 @@ public class MainView {
 			int menu = Integer.parseInt(sc.nextLine());
 			switch(menu) {
 			case 1 :
-				MainView.login();// TODO 로그인 재훈님 View 함수 호출
+				new UserView().start();
+				if (Session.getInstance().getUser() != null) {
+					OrderView.orderMenu();
+				}
 				break;
 			case 2 :
 				OrderView.orderMenu();
