@@ -75,6 +75,28 @@ public class OrderController {
         }
     }
 
+    public static boolean removeFromCart(int index) {
+        List<OrderDetail> carts = Session.getInstance().getCarts();
+        if (index < 0 || index >= carts.size()) {
+            return false;
+        }
+        carts.remove(index);
+        return true;
+    }
+
+    public static boolean updateCartAmount(int index, int amount) {
+        List<OrderDetail> carts = Session.getInstance().getCarts();
+        if (index < 0 || index >= carts.size()) {
+            return false;
+        }
+        if (amount <= 0) {
+            carts.remove(index);
+        } else {
+            carts.get(index).setAmount(amount);
+        }
+        return true;
+    }
+
     public static Integer checkout() throws SQLException {
         List<OrderDetail> carts = Session.getInstance().getCarts();
         if (carts.isEmpty()) {

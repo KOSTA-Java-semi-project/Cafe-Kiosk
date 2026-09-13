@@ -87,32 +87,64 @@ public class MenuView {
     }
 
     private static void printCart() {
-        List<OrderDetail> cart = OrderController.getCart();
-        if (cart.isEmpty()) {
-            System.out.println("장바구니가 비어있습니다.\n");
-            return;
-        }
-
         List<Menu> allMenus = OrderController.getAllMenuList();
         Map<Integer, Menu> menuMap = new HashMap<>();
         for (Menu menu : allMenus) {
             menuMap.put(menu.getMenuId(), menu);
         }
 
-        System.out.println("=========================================");
-        System.out.println("               장바구니 목록");
-        System.out.println("=========================================");
-        int i = 1;
-        for (OrderDetail detail : cart) {
-            Menu menu = menuMap.get(detail.getMenuId());
-            System.out.println(i + ". " + formatCartLine(detail, menu));
-            i++;
-        }
+        while (true) {
+            List<OrderDetail> cart = OrderController.getCart();
+            if (cart.isEmpty()) {
+                System.out.println("장바구니가 비어있습니다.\n");
+                return;
+            }
 
-        int sum = OrderController.calculateCartSum(cart);
-        System.out.println("-----------------------------------------");
-        System.out.println("합계: " + sum + "원");
-        System.out.println("=========================================\n");
+            System.out.println("=========================================");
+            System.out.println("               장바구니 목록");
+            System.out.println("=========================================");
+            int i = 1;
+            for (OrderDetail detail : cart) {
+                Menu menu = menuMap.get(detail.getMenuId());
+                System.out.println(i + ". " + formatCartLine(detail, menu));
+                i++;
+            }
+
+            int sum = OrderController.calculateCartSum(cart);
+            System.out.println("-----------------------------------------");
+            System.out.println("합계: " + sum + "원");
+            System.out.println("=========================================");
+            System.out.println("숫자: 수량 변경  |  d+번호: 삭제 (예: d1)  |  0: 이전 화면으로");
+            System.out.print("선택 > ");
+
+            String input = sc.nextLine().trim();
+            if (input.equals("0")) {
+                return;
+            }
+
+            if (input.length() >= 2 && (input.charAt(0) == 'd' || input.charAt(0) == 'D')) {
+                Integer idx = parseIntOrNull(input.substring(1));
+                if (idx == null || !OrderController.removeFromCart(idx - 1)) {
+                    System.out.println("잘못된 번호입니다.\n");
+                }
+                continue;
+            }
+
+            Integer idx = parseIntOrNull(input);
+            if (idx == null) {
+                System.out.println("잘못된 입력입니다.\n");
+                continue;
+            }
+            System.out.print("변경할 수량을 입력하세요 (0 입력 시 삭제) > ");
+            Integer newAmount = parseIntOrNull(sc.nextLine().trim());
+            if (newAmount == null || newAmount < 0) {
+                System.out.println("잘못된 수량입니다.\n");
+                continue;
+            }
+            if (!OrderController.updateCartAmount(idx - 1, newAmount)) {
+                System.out.println("잘못된 번호입니다.\n");
+            }
+        }
     }
 
     // 장바구니 한 줄 표시 문자열 조합 (OrderDetail은 menuId만 알기 때문에 Menu는 View가 조회해서 넘겨준다)
