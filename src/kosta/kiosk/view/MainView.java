@@ -24,7 +24,7 @@ public class MainView {
 				OrderView.orderMenu();
 				break;
 			case 3 :
-				// TODO 건우님 View 함수호출
+				ManagerView.managerMenu();
 				break;
 
 			case 9 : 
