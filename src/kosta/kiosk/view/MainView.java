@@ -20,7 +20,7 @@ public class MainView {
 			case 1 :
 				UserView.start();
 				if (Session.getInstance().getUser() != null) {
-					OrderView.orderMenu();
+					MenuView.startOrder();
 				}
 				break;
 			case 2 :
