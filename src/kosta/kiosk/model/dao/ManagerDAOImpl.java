@@ -10,10 +10,19 @@ import kosta.kiosk.util.DbManager;
 
 public class ManagerDAOImpl implements ManagerDAO {
 
+    /**
+     * 관리자 로그인
+     *
+     * manager 테이블의 id와 password가 일치하는 관리자를 조회한다.
+     *
+     * 로그인 성공:
+     * ManagerDTO 반환
+     *
+     * 로그인 실패:
+     * null 반환
+     */
     @Override
     public ManagerDTO login(String id, String password) throws SQLException {
-
-        ManagerDTO manager = null;
 
         String sql =
                 "SELECT manager_id, name, id, password "
@@ -32,7 +41,7 @@ public class ManagerDAOImpl implements ManagerDAO {
 
                 if (rs.next()) {
 
-                    manager = new ManagerDTO(
+                    return new ManagerDTO(
                             rs.getInt("manager_id"),
                             rs.getString("name"),
                             rs.getString("id"),
@@ -42,6 +51,6 @@ public class ManagerDAOImpl implements ManagerDAO {
             }
         }
 
-        return manager;
+        return null;
     }
 }

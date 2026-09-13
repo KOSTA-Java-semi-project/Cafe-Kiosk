@@ -1,18 +1,19 @@
 package kosta.kiosk.model.dao;
 
 import java.sql.SQLException;
+
 import kosta.kiosk.model.dto.ManagerDTO;
 
 public interface ManagerDAO {
-	
-	/*
-	 * Manager 로그인
-	 * 
-	 * @param id manager login ID
-	 * @param password manager password
-	 * @return ManagerDTO 만약 로그인이 성공하면 
-	 * 		만약 로그인이 실패했으면 null.
-	 */
-	
-	ManagerDTO login(String id, String password) throws SQLException;
+
+    /**
+     * 관리자 로그인
+     *
+     * @param id 관리자 로그인 ID
+     * @param password 관리자 비밀번호
+     * @return 로그인 성공 시 ManagerDTO,
+     *         실패 시 null
+     * @throws SQLException DB 처리 중 오류 발생 시
+     */
+    ManagerDTO login(String id, String password) throws SQLException;
 }
