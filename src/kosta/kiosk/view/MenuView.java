@@ -13,7 +13,6 @@ import java.util.Scanner;
  * 주문 첫 화면(메뉴 고르는 화면)을 담당한다.
  * 화면 구성: 대분류(카테고리) 전체 목록 + 현재 선택된 카테고리의 메뉴를 함께 보여준다.
  * (기본으로 첫 번째 카테고리의 메뉴가 함께 표시되고, "c+번호"로 다른 카테고리로 전환할 수 있다.)
- *
  * 메뉴를 하나 고르면 옵션 선택은 OrderView가 담당하고, 옵션 선택이 끝나면
  * (장바구니에 담긴 뒤) 다시 이 화면으로 돌아온다. "주문하기"를 선택하면
  * OrderView.checkout()으로 주문을 확정하고, 완료되면 이 화면을 빠져나간다.
@@ -87,32 +86,64 @@ public class MenuView {
     }
 
     private static void printCart() {
-        List<OrderDetail> cart = OrderController.getCart();
-        if (cart.isEmpty()) {
-            System.out.println("장바구니가 비어있습니다.\n");
-            return;
-        }
-
         List<Menu> allMenus = OrderController.getAllMenuList();
         Map<Integer, Menu> menuMap = new HashMap<>();
         for (Menu menu : allMenus) {
             menuMap.put(menu.getMenuId(), menu);
         }
 
-        System.out.println("=========================================");
-        System.out.println("               장바구니 목록");
-        System.out.println("=========================================");
-        int i = 1;
-        for (OrderDetail detail : cart) {
-            Menu menu = menuMap.get(detail.getMenuId());
-            System.out.println(i + ". " + formatCartLine(detail, menu));
-            i++;
-        }
+        while (true) {
+            List<OrderDetail> cart = OrderController.getCart();
+            if (cart.isEmpty()) {
+                System.out.println("장바구니가 비어있습니다.\n");
+                return;
+            }
 
-        int sum = OrderController.calculateCartSum(cart);
-        System.out.println("-----------------------------------------");
-        System.out.println("합계: " + sum + "원");
-        System.out.println("=========================================\n");
+            System.out.println("=========================================");
+            System.out.println("               장바구니 목록");
+            System.out.println("=========================================");
+            int i = 1;
+            for (OrderDetail detail : cart) {
+                Menu menu = menuMap.get(detail.getMenuId());
+                System.out.println(i + ". " + formatCartLine(detail, menu));
+                i++;
+            }
+
+            int sum = OrderController.calculateCartSum(cart);
+            System.out.println("-----------------------------------------");
+            System.out.println("합계: " + sum + "원");
+            System.out.println("=========================================");
+            System.out.println("숫자: 수량 변경  |  d+번호: 삭제 (예: d1)  |  0: 이전 화면으로");
+            System.out.print("선택 > ");
+
+            String input = sc.nextLine().trim();
+            if (input.equals("0")) {
+                return;
+            }
+
+            if (input.length() >= 2 && (input.charAt(0) == 'd' || input.charAt(0) == 'D')) {
+                Integer idx = parseIntOrNull(input.substring(1));
+                if (idx == null || !OrderController.removeFromCart(idx - 1)) {
+                    System.out.println("잘못된 번호입니다.\n");
+                }
+                continue;
+            }
+
+            Integer idx = parseIntOrNull(input);
+            if (idx == null) {
+                System.out.println("잘못된 입력입니다.\n");
+                continue;
+            }
+            System.out.print("변경할 수량을 입력하세요 (0 입력 시 삭제) > ");
+            Integer newAmount = parseIntOrNull(sc.nextLine().trim());
+            if (newAmount == null || newAmount < 0) {
+                System.out.println("잘못된 수량입니다.\n");
+                continue;
+            }
+            if (!OrderController.updateCartAmount(idx - 1, newAmount)) {
+                System.out.println("잘못된 번호입니다.\n");
+            }
+        }
     }
 
     // 장바구니 한 줄 표시 문자열 조합 (OrderDetail은 menuId만 알기 때문에 Menu는 View가 조회해서 넘겨준다)
