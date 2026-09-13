@@ -2,6 +2,7 @@ package kosta.kiosk.view;
 
 import kosta.kiosk.controller.OrderController;
 import kosta.kiosk.controller.UserController;
+import kosta.kiosk.exception.CancelledException;
 import kosta.kiosk.model.dto.HotIce;
 import kosta.kiosk.model.dto.IceLevel;
 import kosta.kiosk.model.dto.Menu;
@@ -222,9 +223,6 @@ private static final Scanner sc = new Scanner(System.in);
         System.out.println("                (c: 취소하고 메뉴 화면으로 돌아가기)");
         System.out.println("=========================================");
         System.out.print("입력 > ");
-    }
-    // cancle 입력
-    private static class CancelledException extends RuntimeException {
     }
     public static void main(String[] args) {
         MenuView.startOrder();
