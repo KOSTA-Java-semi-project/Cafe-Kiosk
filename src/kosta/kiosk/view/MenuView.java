@@ -136,8 +136,8 @@ public class MenuView {
             }
             System.out.print("변경할 수량을 입력하세요 (0 입력 시 삭제) > ");
             Integer newAmount = parseIntOrNull(sc.nextLine().trim());
-            if (newAmount == null || newAmount < 0) {
-                System.out.println("잘못된 수량입니다.\n");
+            if (newAmount == null || newAmount < 0 || newAmount > 150) {
+                System.out.println("잘못된 수량입니다. (0~150 사이로 입력해주세요)\n");
                 continue;
             }
             if (!OrderController.updateCartAmount(idx - 1, newAmount)) {
