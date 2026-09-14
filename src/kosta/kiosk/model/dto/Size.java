@@ -2,23 +2,15 @@ package kosta.kiosk.model.dto;
 
 public enum Size {
 
-	SMALL("SMALL"), MEDIUM("MEDIUM"), LARGE("LARGE"),;
+	SMALL(-500), MEDIUM(0), LARGE(500);
 
-	private String code;
+	private final int price;
 
-	Size(String code) {
-		this.code = code;
+	Size(int price) {
+		this.price = price;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public static Size fromValue(String code) {
-		for (Size s : values()) {
-			if (s.code.equals(code))
-				return s;
-		}
-		throw new IllegalArgumentException("Wrong code:" + code);
+	public int getPrice() {
+		return price;
 	}
 }
