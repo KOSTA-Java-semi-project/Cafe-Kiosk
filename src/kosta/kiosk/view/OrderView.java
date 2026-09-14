@@ -137,10 +137,10 @@ private static final Scanner sc = new Scanner(System.in);
                 throw new CancelledException();
             }
             Integer value = parseIntOrNull(line);
-            if (value != null && value >= 0) {
+            if (value != null && value >= 0 && value <= 30) {
                 return value;
             }
-            System.out.println("0 이상의 숫자를 입력해주세요.");
+            System.out.println("0~30 사이의 숫자를 입력해주세요.");
         }
     }
 
@@ -152,10 +152,10 @@ private static final Scanner sc = new Scanner(System.in);
                 throw new CancelledException();
             }
             Integer value = parseIntOrNull(line);
-            if (value != null && value >= 1) {
+            if (value != null && value >= 1 && value <= 150) {
                 return value;
             }
-            System.out.println("1 이상의 숫자를 입력해주세요.");
+            System.out.println("1~150 사이의 숫자를 입력해주세요.");
         }
     }
 
