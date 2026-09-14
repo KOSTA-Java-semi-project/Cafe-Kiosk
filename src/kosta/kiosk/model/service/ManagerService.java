@@ -17,218 +17,151 @@ import kosta.kiosk.model.dto.Menu;
 
 public class ManagerService {
 
-    private final ManagerDAO managerDAO;
-    private final MenuDAO menuDAO;
+	private final ManagerDAO managerDAO;
+	private final MenuDAO menuDAO;
 
+	public ManagerService() {
 
-    public ManagerService() {
+		managerDAO = new ManagerDAOImpl();
 
-        managerDAO = new ManagerDAOImpl();
+		menuDAO = new MenuDAOImpl();
+	}
 
-        menuDAO = new MenuDAOImpl();
-    }
+	// =========================================================
+	// 관리자 로그인
+	// =========================================================
 
+	public ManagerDTO login(String id, String password) throws SQLException {
 
-    // =========================================================
-    // 관리자 로그인
-    // =========================================================
+		if (id == null || id.trim().isEmpty()) {
 
-    public ManagerDTO login(
-            String id,
-            String password
-    ) throws SQLException {
+			return null;
+		}
 
-        if (id == null
-                || id.trim().isEmpty()) {
+		if (password == null || password.trim().isEmpty()) {
 
-            return null;
-        }
+			return null;
+		}
 
-        if (password == null
-                || password.trim().isEmpty()) {
+		return managerDAO.login(id.trim(), password);
+	}
 
-            return null;
-        }
+	// =========================================================
+	// 전체 메뉴 조회
+	// =========================================================
 
-        return managerDAO.login(
-                id.trim(),
-                password
-        );
-    }
+	public List<Menu> selectAllMenu() throws SQLException {
 
+		return menuDAO.selectAllMenu();
+	}
 
-    // =========================================================
-    // 전체 메뉴 조회
-    // =========================================================
+	// =========================================================
+	// 메뉴 등록
+	// =========================================================
 
-    public List<Menu> selectAllMenu()
-            throws SQLException {
+	public int insertMenu(Menu menu) throws SQLException {
 
-        return menuDAO.selectAllMenu();
-    }
+		return menuDAO.insertMenu(menu);
+	}
 
+	// =========================================================
+	// 메뉴 수정
+	// =========================================================
 
-    // =========================================================
-    // 메뉴 등록
-    // =========================================================
+	public int updateMenu(Menu menu) throws SQLException {
 
-    public int insertMenu(
-            Menu menu
-    ) throws SQLException {
+		return menuDAO.updateMenuById(menu);
+	}
 
-        return menuDAO.insertMenu(menu);
-    }
+	// =========================================================
+	// 메뉴 삭제
+	// =========================================================
 
+	public void deleteMenu(int menuId) throws SQLException {
 
-    // =========================================================
-    // 메뉴 수정
-    // =========================================================
+		menuDAO.deleteMenuById(menuId);
+	}
 
-    public int updateMenu(
-            Menu menu
-    ) throws SQLException {
+	// =========================================================
+	// 일매출 조회
+	// =========================================================
 
-        return menuDAO.updateMenuById(menu);
-    }
+	public int selectDailySales(LocalDate date) throws SQLException {
 
+		/*
+		 * 예:
+		 *
+		 * date = 2026-09-14
+		 *
+		 * start: 2026-09-14 00:00:00
+		 *
+		 * end: 2026-09-15 00:00:00
+		 *
+		 * 따라서 9월 14일 하루 동안 발생한 모든 order.sum 값을 더한다.
+		 */
 
-    // =========================================================
-    // 메뉴 삭제
-    // =========================================================
+		LocalDateTime start = date.atStartOfDay();
 
-    public void deleteMenu(
-            int menuId
-    ) throws SQLException {
+		LocalDateTime end = date.plusDays(1).atStartOfDay();
 
-        menuDAO.deleteMenuById(menuId);
-    }
+		return managerDAO.selectTotalSales(start, end);
+	}
 
+	// =========================================================
+	// 주간 매출 조회
+	// =========================================================
 
-    // =========================================================
-    // 일매출 조회
-    // =========================================================
+	public int selectWeeklySales(LocalDate date) throws SQLException {
 
-    public int selectDailySales(
-            LocalDate date
-    ) throws SQLException {
+		/*
+		 * 사용자가 해당 주의 아무 날짜나 입력한다.
+		 *
+		 * 예:
+		 *
+		 * 입력: 2026-09-16
+		 *
+		 * 해당 주의 월요일: 2026-09-14
+		 *
+		 * 다음 월요일: 2026-09-21
+		 *
+		 * 조회:
+		 *
+		 * 2026-09-14 00:00 이상 2026-09-21 00:00 미만
+		 */
 
-        /*
-         * 예:
-         *
-         * date = 2026-09-14
-         *
-         * start:
-         * 2026-09-14 00:00:00
-         *
-         * end:
-         * 2026-09-15 00:00:00
-         *
-         * 따라서 9월 14일 하루 동안 발생한
-         * 모든 order.sum 값을 더한다.
-         */
+		LocalDate monday = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
-        LocalDateTime start =
-                date.atStartOfDay();
+		LocalDate nextMonday = monday.plusWeeks(1);
 
-        LocalDateTime end =
-                date.plusDays(1)
-                    .atStartOfDay();
+		return managerDAO.selectTotalSales(
 
-        return managerDAO.selectTotalSales(
-                start,
-                end
-        );
-    }
+				monday.atStartOfDay(),
 
+				nextMonday.atStartOfDay());
+	}
 
-    // =========================================================
-    // 주간 매출 조회
-    // =========================================================
+	// =========================================================
+	// 월별 매출 조회
+	// =========================================================
 
-    public int selectWeeklySales(
-            LocalDate date
-    ) throws SQLException {
+	public int selectMonthlySales(int year, int month) throws SQLException {
 
-        /*
-         * 사용자가 해당 주의 아무 날짜나 입력한다.
-         *
-         * 예:
-         *
-         * 입력:
-         * 2026-09-16
-         *
-         * 해당 주의 월요일:
-         * 2026-09-14
-         *
-         * 다음 월요일:
-         * 2026-09-21
-         *
-         * 조회:
-         *
-         * 2026-09-14 00:00 이상
-         * 2026-09-21 00:00 미만
-         */
+		/*
+		 * 예:
+		 *
+		 * 2026년 9월
+		 *
+		 * start: 2026-09-01 00:00
+		 *
+		 * end: 2026-10-01 00:00
+		 */
 
-        LocalDate monday =
-                date.with(
-                        TemporalAdjusters.previousOrSame(
-                                DayOfWeek.MONDAY
-                        )
-                );
+		YearMonth yearMonth = YearMonth.of(year, month);
 
-        LocalDate nextMonday =
-                monday.plusWeeks(1);
+		LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
 
-        return managerDAO.selectTotalSales(
+		LocalDateTime end = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
 
-                monday.atStartOfDay(),
-
-                nextMonday.atStartOfDay()
-        );
-    }
-
-
-    // =========================================================
-    // 월별 매출 조회
-    // =========================================================
-
-    public int selectMonthlySales(
-            int year,
-            int month
-    ) throws SQLException {
-
-        /*
-         * 예:
-         *
-         * 2026년 9월
-         *
-         * start:
-         * 2026-09-01 00:00
-         *
-         * end:
-         * 2026-10-01 00:00
-         */
-
-        YearMonth yearMonth =
-                YearMonth.of(
-                        year,
-                        month
-                );
-
-        LocalDateTime start =
-                yearMonth
-                        .atDay(1)
-                        .atStartOfDay();
-
-        LocalDateTime end =
-                yearMonth
-                        .plusMonths(1)
-                        .atDay(1)
-                        .atStartOfDay();
-
-        return managerDAO.selectTotalSales(
-                start,
-                end
-        );
-    }
+		return managerDAO.selectTotalSales(start, end);
+	}
 }
