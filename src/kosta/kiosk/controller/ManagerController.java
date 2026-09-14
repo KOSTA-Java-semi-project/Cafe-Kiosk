@@ -1,6 +1,7 @@
 package kosta.kiosk.controller;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,100 +11,172 @@ import kosta.kiosk.model.service.ManagerService;
 
 public class ManagerController {
 
-    private final ManagerService managerService;
+	private final ManagerService managerService;
 
-    public ManagerController() {
-        managerService = new ManagerService();
-    }
+	public ManagerController() {
 
+		managerService = new ManagerService();
+	}
 
-    // 관리자 로그인
-    public ManagerDTO login(String id, String password) {
+	// =========================================================
+	// 관리자 로그인
+	// =========================================================
 
-        try {
+	public ManagerDTO login(String id, String password) {
 
-            return managerService.login(id, password);
+		try {
 
-        } catch (SQLException e) {
+			return managerService.login(id, password);
 
-            System.out.println("관리자 로그인 중 DB 오류가 발생했습니다.");
-            System.out.println(e.getMessage());
+		} catch (SQLException e) {
 
-            return null;
-        }
-    }
+			System.out.println("관리자 로그인 중 DB 오류가 발생했습니다.");
 
+			System.out.println(e.getMessage());
 
-    // 전체 메뉴 조회
-    public List<Menu> selectAllMenu() {
+			return null;
+		}
+	}
 
-        try {
+	// =========================================================
+	// 전체 메뉴 조회
+	// =========================================================
 
-            return managerService.selectAllMenu();
+	public List<Menu> selectAllMenu() {
 
-        } catch (SQLException e) {
+		try {
 
-            System.out.println("메뉴 조회 중 DB 오류가 발생했습니다.");
-            System.out.println(e.getMessage());
+			return managerService.selectAllMenu();
 
-            return Collections.emptyList();
-        }
-    }
+		} catch (SQLException e) {
 
+			System.out.println("메뉴 조회 중 DB 오류가 발생했습니다.");
 
-    // 메뉴 등록
-    public boolean insertMenu(Menu menu) {
+			System.out.println(e.getMessage());
 
-        try {
+			return Collections.emptyList();
+		}
+	}
 
-            int result = managerService.insertMenu(menu);
+	// =========================================================
+	// 메뉴 등록
+	// =========================================================
 
-            return result > 0;
+	public boolean insertMenu(Menu menu) {
 
-        } catch (SQLException e) {
+		try {
 
-            System.out.println("메뉴 등록 중 DB 오류가 발생했습니다.");
-            System.out.println(e.getMessage());
+			return managerService.insertMenu(menu) > 0;
 
-            return false;
-        }
-    }
+		} catch (SQLException e) {
 
+			System.out.println("메뉴 등록 중 DB 오류가 발생했습니다.");
 
-    // 메뉴 수정
-    public boolean updateMenu(Menu menu) {
+			System.out.println(e.getMessage());
 
-        try {
+			return false;
+		}
+	}
 
-            int result = managerService.updateMenu(menu);
+	// =========================================================
+	// 메뉴 수정
+	// =========================================================
 
-            return result > 0;
+	public boolean updateMenu(Menu menu) {
 
-        } catch (SQLException e) {
+		try {
 
-            System.out.println("메뉴 수정 중 DB 오류가 발생했습니다.");
-            System.out.println(e.getMessage());
+			return managerService.updateMenu(menu) > 0;
 
-            return false;
-        }
-    }
+		} catch (SQLException e) {
 
+			System.out.println("메뉴 수정 중 DB 오류가 발생했습니다.");
 
-    // 메뉴 삭제
-    public boolean deleteMenu(int menuId) {
+			System.out.println(e.getMessage());
 
-        try {
+			return false;
+		}
+	}
 
-            managerService.deleteMenu(menuId);
+	// =========================================================
+	// 메뉴 삭제
+	// =========================================================
 
-            return true;
+	public boolean deleteMenu(int menuId) {
 
-        } catch (SQLException e) {
+		try {
 
-            System.out.println("메뉴 삭제 중 DB 오류가 발생했습니다.");
-            System.out.println(e.getMessage());
+			managerService.deleteMenu(menuId);
 
-            return false;
-        }
-    }
+			return true;
+
+		} catch (SQLException e) {
+
+			System.out.println("메뉴 삭제 중 DB 오류가 발생했습니다.");
+
+			System.out.println(e.getMessage());
+
+			return false;
+		}
+	}
+
+	// =========================================================
+	// 일매출 조회
+	// =========================================================
+
+	public Integer selectDailySales(LocalDate date) {
+
+		try {
+
+			return managerService.selectDailySales(date);
+
+		} catch (SQLException | RuntimeException e) {
+
+			System.out.println("일매출 조회 중 오류가 발생했습니다.");
+
+			System.out.println(e.getMessage());
+
+			return null;
+		}
+	}
+
+	// =========================================================
+	// 주간 총 매출
+	// =========================================================
+
+	public Integer selectWeeklySales(LocalDate date) {
+
+		try {
+
+			return managerService.selectWeeklySales(date);
+
+		} catch (SQLException | RuntimeException e) {
+
+			System.out.println("주간 매출 조회 중 오류가 발생했습니다.");
+
+			System.out.println(e.getMessage());
+
+			return null;
+		}
+	}
+
+	// =========================================================
+	// 월별 총 매출
+	// =========================================================
+
+	public Integer selectMonthlySales(int year, int month) {
+
+		try {
+
+			return managerService.selectMonthlySales(year, month);
+
+		} catch (SQLException | RuntimeException e) {
+
+			System.out.println("월 매출 조회 중 오류가 발생했습니다.");
+
+			System.out.println(e.getMessage());
+
+			return null;
+		}
+	}
 }
