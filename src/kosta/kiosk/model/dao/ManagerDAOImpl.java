@@ -4,25 +4,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import kosta.kiosk.model.dto.ManagerDTO;
 import kosta.kiosk.util.DbManager;
 
 public class ManagerDAOImpl implements ManagerDAO {
 
-    /**
+    /*
      * 관리자 로그인
-     *
-     * manager 테이블의 id와 password가 일치하는 관리자를 조회한다.
-     *
-     * 로그인 성공:
-     * ManagerDTO 반환
-     *
-     * 로그인 실패:
-     * null 반환
      */
     @Override
-    public ManagerDTO login(String id, String password) throws SQLException {
+    public ManagerDTO login(
+            String id,
+            String password
+    ) throws SQLException {
 
         String sql =
                 "SELECT manager_id, name, id, password "
@@ -37,7 +34,9 @@ public class ManagerDAOImpl implements ManagerDAO {
             ps.setString(1, id);
             ps.setString(2, password);
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (
+                ResultSet rs = ps.executeQuery()
+            ) {
 
                 if (rs.next()) {
 
@@ -52,5 +51,55 @@ public class ManagerDAOImpl implements ManagerDAO {
         }
 
         return null;
+    }
+
+
+    /*
+     * 특정 기간의 총 매출 조회
+     *
+     * start 이상
+     * end 미만
+     */
+    @Override
+    public int selectTotalSales(
+            LocalDateTime start,
+            LocalDateTime end
+    ) throws SQLException {
+
+        String sql =
+                "SELECT COALESCE(SUM(o.sum), 0) AS total_sales "
+              + "FROM `order` o "
+              + "WHERE o.created_at >= ? "
+              + "AND o.created_at < ?";
+
+        try (
+            Connection con = DbManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)
+        ) {
+
+            ps.setTimestamp(
+                    1,
+                    Timestamp.valueOf(start)
+            );
+
+            ps.setTimestamp(
+                    2,
+                    Timestamp.valueOf(end)
+            );
+
+            try (
+                ResultSet rs = ps.executeQuery()
+            ) {
+
+                if (rs.next()) {
+
+                    return rs.getInt(
+                            "total_sales"
+                    );
+                }
+            }
+        }
+
+        return 0;
     }
 }
