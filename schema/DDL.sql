@@ -68,11 +68,6 @@ create table order_detail(
     foreign key (order_id) references `order`(order_id),
     foreign key (menu_id) references menu(menu_id)
 );
-INSERT INTO `user` (name, phone, stamp) VALUES
-('김민준', '01011112222', 0),
-('이서연', '01022223333', 3),
-('박지훈', '01033334444', 5),
-('최수아', '01044445555', 10);
 
 alter table coupon alter column price set default 2000;
 alter table `order` modify column user_id int null;
