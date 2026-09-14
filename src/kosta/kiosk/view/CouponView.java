@@ -57,6 +57,18 @@ public class CouponView {
 
             CouponDTO selected = coupons.get(choice - 1);
 
+            if (selected.getPrice() > orderAmount) {
+                System.out.print("결제 금액(" + orderAmount + "원)보다 할인 금액(" + selected.getPrice()
+                        + "원)이 더 큽니다. 초과되는 할인 금액은 소멸됩니다. 그래도 사용하시겠습니까? (y/n): ");
+
+                String answer = sc.nextLine();
+
+                if (!answer.equalsIgnoreCase("y")) {
+                    System.out.println("쿠폰 사용을 취소합니다.");
+                    continue;
+                }
+            }
+
             int beforeAmount = orderAmount;
             int actualDiscount = Math.min(selected.getPrice(), orderAmount);
             orderAmount = couponController.useCoupon(selected, orderAmount);

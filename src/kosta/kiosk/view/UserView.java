@@ -17,8 +17,15 @@ public class UserView {
      * DB 관련 오류 처리는 Controller가 담당한다 (추후 FailView 연동 예정).
      */
     public static void start() {
-        System.out.print("전화번호를 입력하세요 (- 없이 숫자만): ");
-        String phone = sc.nextLine();
+        String phone;
+        while (true) {
+            System.out.print("전화번호 11자리를 입력하세요 (- 없이 숫자만): ");
+            phone = sc.nextLine();
+            if (phone.matches("\\d{11}")) {
+                break;
+            }
+            System.out.println("전화번호는 숫자 11자리로 입력해주세요.");
+        }
 
         UserDTO user = userController.login(phone);
 
