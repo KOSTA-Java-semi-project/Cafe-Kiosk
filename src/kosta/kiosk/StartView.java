@@ -1,4 +1,6 @@
-package kosta.kiosk.view;
+package kosta.kiosk;
+
+import kosta.kiosk.view.MainView;
 
 public class StartView {
 
