@@ -216,7 +216,7 @@ public class MenuView {
         System.out.println("현재 장바구니: " + cartCount + "건");
         System.out.println("=========================================");
         System.out.println("메뉴번호: 메뉴 선택  |  c+카테고리번호: 카테고리 이동 (예: c2)");
-        System.out.println("v: 장바구니 보기  |  o: 주문하기  |  0: 이전 화면으로");
+        System.out.println("v: 장바구니 보기  |  o: 결제하기  |  0: 이전 화면으로");
         System.out.print("선택 > ");
     }
 }
