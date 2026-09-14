@@ -19,50 +19,52 @@ import java.util.Map;
 
 public class OrderService {
 
-    private OrderDAO orderDAO = new OrderDAOImpl();
-    private MenuDAO menuDAO = new MenuDAOImpl();
-    private CategoryDAO categoryDAO = new CategoryDAOImpl();
+	private OrderDAO orderDAO = new OrderDAOImpl();
+	private MenuDAO menuDAO = new MenuDAOImpl();
+	private CategoryDAO categoryDAO = new CategoryDAOImpl();
 
-    public List<Category> getCategoryList() throws SQLException {
-        return categoryDAO.selectAllCategory();
-    }
+	private static int SHOT_PRICE = 600;
 
-    public List<Menu> getMenuListByCategoryId(int categoryId) throws SQLException {
-        return menuDAO.selectMenuListByCategoryId(categoryId);
-    }
+	public List<Category> getCategoryList() throws SQLException {
+		return categoryDAO.selectAllCategory();
+	}
 
-    public int insertOrder(Integer userId, List<OrderDetail> orderDetailList) throws SQLException {
-        if (orderDetailList == null || orderDetailList.isEmpty()) {
-            throw new SQLException("주문할 메뉴가 없습니다.");
-        }
-        int sum = calculateSum(orderDetailList);
-        Order order = new Order(userId, sum, orderDetailList);
-        return orderDAO.insertOrder(order);
-    }
+	public List<Menu> getMenuListByCategoryId(int categoryId) throws SQLException {
+		return menuDAO.selectMenuListByCategoryId(categoryId);
+	}
 
-    /**
-     * 주문상세 목록의 합계 금액을 계산한다.
-     * insertOrder 내부뿐 아니라, 주문 확정 전 결제 화면에 넘길 금액을 미리 계산할 때도 재사용한다.
-     */
-    public int calculateSum(List<OrderDetail> orderDetailList) throws SQLException {
-        Map<Integer, Integer> priceMap = new HashMap<>();
-        for (Menu menu : menuDAO.selectAllMenu()) {
-            priceMap.put(menu.getMenuId(), menu.getPrice());
-        }
+	public int insertOrder(Integer userId, List<OrderDetail> orderDetailList) throws SQLException {
+		if (orderDetailList == null || orderDetailList.isEmpty()) {
+			throw new SQLException("주문할 메뉴가 없습니다.");
+		}
+		int sum = calculateSum(orderDetailList);
+		Order order = new Order(userId, sum, orderDetailList);
+		return orderDAO.insertOrder(order);
+	}
 
-        int sum = 0;
-        for (OrderDetail detail : orderDetailList) {
-            int price = priceMap.get(detail.getMenuId());
-            sum += price * detail.getAmount();
-        }
-        return sum;
-    }
+	/**
+	 * 주문상세 목록의 합계 금액을 계산한다. insertOrder 내부뿐 아니라, 주문 확정 전 결제 화면에 넘길 금액을 미리 계산할 때도
+	 * 재사용한다.
+	 */
+	public int calculateSum(List<OrderDetail> orderDetailList) throws SQLException {
+		Map<Integer, Integer> priceMap = new HashMap<>();
+		for (Menu menu : menuDAO.selectAllMenu()) {
+			priceMap.put(menu.getMenuId(), menu.getPrice());
+		}
 
-    public Order selectOrderByOrderId(int orderId) throws SQLException {
-        return orderDAO.selectOrderByOrderId(orderId);
-    }
+		int sum = 0;
+		for (OrderDetail detail : orderDetailList) {
+			int price = priceMap.get(detail.getMenuId());
+			sum += (price + detail.getSize().getPrice() + detail.getShot() * SHOT_PRICE) * detail.getAmount();
+		}
+		return sum;
+	}
 
-    public List<Menu> getAllMenuList() throws SQLException {
-        return menuDAO.selectAllMenu();
-    }
+	public Order selectOrderByOrderId(int orderId) throws SQLException {
+		return orderDAO.selectOrderByOrderId(orderId);
+	}
+
+	public List<Menu> getAllMenuList() throws SQLException {
+		return menuDAO.selectAllMenu();
+	}
 }

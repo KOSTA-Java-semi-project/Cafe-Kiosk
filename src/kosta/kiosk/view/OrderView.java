@@ -176,7 +176,7 @@ private static final Scanner sc = new Scanner(System.in);
         System.out.println("=========================================");
         Size[] sizes = Size.values();
         for (int i = 0; i < sizes.length; i++) {
-            System.out.println((i + 1) + ". " + sizes[i].name());
+            System.out.println((i + 1) + ". " + sizes[i].name() + "\t(" + sizes[i].getPrice()+"원)");
         }
         System.out.println("-----------------------------------------");
         System.out.println("c: 취소하고 메뉴 화면으로 돌아가기");
@@ -203,6 +203,7 @@ private static final Scanner sc = new Scanner(System.in);
     private static void printShotOption() {
         System.out.println("=========================================");
         System.out.println("         추가할 샷 개수를 입력하세요 (없으면 0)");
+        System.out.println("         샷 당 +600원");
         System.out.println("         (c: 취소하고 메뉴 화면으로 돌아가기)");
         System.out.println("=========================================");
         System.out.print("입력 > ");
@@ -223,8 +224,5 @@ private static final Scanner sc = new Scanner(System.in);
         System.out.println("                (c: 취소하고 메뉴 화면으로 돌아가기)");
         System.out.println("=========================================");
         System.out.print("입력 > ");
-    }
-    public static void main(String[] args) {
-        MenuView.startOrder();
     }
 }
