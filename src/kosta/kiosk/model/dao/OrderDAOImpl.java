@@ -128,7 +128,7 @@ public class OrderDAOImpl implements OrderDAO {
                 OrderDetail orderDetail = new OrderDetail(rs.getInt("detail_id"),
                         rs.getInt("order_id"), rs.getInt("menu_id"),
                         rs.getInt("amount"),
-                        Size.fromValue(rs.getString("size")),
+                        Size.valueOf(rs.getString("size")),
                         rs.getInt("shot"),
                         ice,
                         rs.getInt("syrup"));
@@ -154,7 +154,7 @@ public class OrderDAOImpl implements OrderDAO {
                 stmt.setInt(1, orderId);
                 stmt.setInt(2, orderDetail.getMenuId());
                 stmt.setInt(3, orderDetail.getAmount());
-                stmt.setString(4, orderDetail.getSize().getCode());
+                stmt.setString(4, orderDetail.getSize().name());
                 stmt.setInt(5, orderDetail.getShot());
 
                 if (orderDetail.getIce() != null) {
