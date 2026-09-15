@@ -8,6 +8,8 @@ import kosta.kiosk.model.dto.CouponDTO;
 import kosta.kiosk.model.dto.UserDTO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserService {
 
@@ -37,9 +39,12 @@ public class UserService {
         userDAO.updateUserStampByUserId(user.getUserId(), remainStamp);
         user.setStamp(remainStamp); // 메모리에 있는 객체도 최신화
 
-        for (int i = 0; i < couponsEarned; i++) {
-            CouponDTO newCoupon = new CouponDTO(user.getUserId()); // couponId, price, createdAt 모두 DB가 채움
-            couponDAO.insertCoupon(newCoupon);
+        if (couponsEarned > 0) {
+            List<CouponDTO> newCoupons = new ArrayList<>();
+            for (int i = 0; i < couponsEarned; i++) {
+                newCoupons.add(new CouponDTO(user.getUserId())); // couponId, price, createdAt 모두 DB가 채움
+            }
+            couponDAO.insertCouponListBatch(newCoupons);
         }
     }
 }

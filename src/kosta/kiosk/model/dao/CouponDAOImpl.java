@@ -73,6 +73,73 @@ public class CouponDAOImpl implements CouponDAO {
     }
 
     @Override
+    public int insertCouponList(List<CouponDTO> coupons) throws SQLException {
+        if (coupons.isEmpty()) return 0;
+
+        String sql = "INSERT INTO coupon (user_id) VALUES (?)";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = DbManager.getConnection();
+            con.setAutoCommit(false);
+            pstmt = con.prepareStatement(sql);
+
+            int inserted = 0;
+            for (CouponDTO couponDTO : coupons) {
+                pstmt.setInt(1, couponDTO.getUserId());
+                inserted += pstmt.executeUpdate();
+            }
+
+            con.commit();
+            return inserted;
+        } catch (SQLException e) {
+            if (con != null) con.rollback();
+            throw e;
+        } finally {
+            if (con != null) con.setAutoCommit(true);
+            DbManager.close(con, pstmt, null);
+        }
+    }
+
+    @Override
+    public int insertCouponListBatch(List<CouponDTO> coupons) throws SQLException {
+        if (coupons.isEmpty()) return 0;
+
+        String sql = "INSERT INTO coupon (user_id) VALUES (?)";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = DbManager.getBatchConnection();
+            con.setAutoCommit(false);
+            pstmt = con.prepareStatement(sql);
+
+            for (CouponDTO couponDTO : coupons) {
+                pstmt.setInt(1, couponDTO.getUserId());
+                pstmt.addBatch();
+            }
+
+            int[] results = pstmt.executeBatch();
+            con.commit();
+
+            int inserted = 0;
+            for (int r : results) {
+                if (r > 0) inserted++;
+            }
+            return inserted;
+        } catch (SQLException e) {
+            if (con != null) con.rollback();
+            throw e;
+        } finally {
+            if (con != null) con.setAutoCommit(true);
+            DbManager.close(con, pstmt, null);
+        }
+    }
+
+    @Override
     public boolean deleteCouponByCouponId(int couponId) throws SQLException {
         String sql = "DELETE FROM coupon WHERE coupon_id = ?";
 
