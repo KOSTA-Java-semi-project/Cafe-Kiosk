@@ -31,7 +31,16 @@ public class DbManager {
 				profile.getProperty("userName"),
 				profile.getProperty("password"));
 	}
-	
+
+	public static Connection getBatchConnection() throws SQLException {
+		Properties connProps = new Properties();
+		connProps.setProperty("user", profile.getProperty("userName"));
+		connProps.setProperty("password", profile.getProperty("password"));
+		connProps.setProperty("rewriteBatchedStatements", "true");
+
+		return DriverManager.getConnection(profile.getProperty("url"), connProps);
+	}
+
 	public static void close(Connection con, Statement st, ResultSet rs) {
 			try {
 				if(rs!=null) rs.close();
